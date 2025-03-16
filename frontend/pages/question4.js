@@ -11,7 +11,7 @@ import {
 
 const Question4 = () => {
   const [chartData, setChartData] = useState([]);
-  const [years, setYears] = useState([]); // Enthält alle Jahreswerte plus "all"
+  const [years, setYears] = useState([]);
   const [selectedYear, setSelectedYear] = useState("all");
 
   useEffect(() => {

@@ -7,7 +7,9 @@ def create_app():
 
     from app.routes.question5 import question5_bp
     from app.routes.question4 import question4_bp
+    from app.routes.question1 import question1_bp
 
+    app.register_blueprint(question1_bp, url_prefix='/api/question1')
     app.register_blueprint(question5_bp, url_prefix='/api/question5')
     app.register_blueprint(question4_bp, url_prefix='/api/question4')
 
