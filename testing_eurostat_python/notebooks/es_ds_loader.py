@@ -96,7 +96,7 @@ class EurostatDataLoader:
         if 'dimension' not in data:
             raise Exception("Invalid data format: 'dimension' not found.")
         
-        # order of dimensions to keep order lol
+        # order of dimensions to keep order
         if 'id' in data['dimension']:
             dim_order = data['dimension']['id']
         else:
@@ -104,13 +104,19 @@ class EurostatDataLoader:
 
         # create a dict with all possible values for each dimension
         dim_values = {}
+        geo_map = {}
         for dim in dim_order:
-            
             if dim in ['id', 'size']:
                 continue
             category = data['dimension'][dim]['category']
             sorted_categories = sorted(category['index'].items(), key=lambda x: x[1])
-            dim_values[dim] = [category['label'].get(k, k) for k, _ in sorted_categories]
+            
+            if dim == "geo":
+                labels = [category['label'].get(k, k) for k, _ in sorted_categories]
+                dim_values[dim] = labels
+                geo_map = dict(zip(labels, [k for k, _ in sorted_categories]))
+            else:
+                dim_values[dim] = [category['label'].get(k, k) for k, _ in sorted_categories]
 
         # this gets us all possible combinations of the dimensions
         all_combinations = list(itertools.product(*[dim_values[dim] for dim in dim_values]))
@@ -123,8 +129,13 @@ class EurostatDataLoader:
         # create a DataFrame from the data
         df = pd.DataFrame(all_combinations, columns=list(dim_values.keys()))
         df['value'] = values
+
+        # Falls die Dimension geo existiert, füge eine extra Spalte "geo_code" hinzu
+        if "geo" in df.columns and geo_map:
+            df["geo_code"] = df["geo"].map(geo_map)
         
         return df
+
 
     def load_dataset(self, dataset_code, filters=None, dimensions=None):
         """
@@ -145,6 +156,8 @@ class EurostatDataLoader:
         data = self.fetch_dataset(dataset_code, params)
         df = self.parse_data(data)
         
+        print(set(df.columns))
+
         # filter the dataset for the requested dimensions of diemensions parameter
         if dimensions:
             available_dims = set(df.columns)
@@ -183,12 +196,12 @@ if __name__ == '__main__':
     loader = EurostatDataLoader(cache_expiry=1800)
     
     # loads a dataset with  filters for time 2019 & 2020 as a pandas df
-    df = loader.load_dataset('ilc_mddw06', filters={'time': ['2019', '2020']})
+    df = loader.load_dataset('crim_gen_reg')
     print(df.head())
     
     # loads a dict of all available dimensions of this dataset
     # useful for some the upcoming drowndown menus for our website
     # this might need an extra API call idk
-    dims = loader.get_dimensions('ilc_mddw06')
-    print(dims.keys()) # this gets us the keys like "time", "geo" etc
-    print(dims['time']) # here we are getting all availabe years for example
+    #dims = loader.get_dimensions('ilc_mddw06')
+   #print(dims.keys()) # this gets us the keys like "time", "geo" etc
+    #print(dims['time']) # here we are getting all availabe years for example

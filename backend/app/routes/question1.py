@@ -55,3 +55,31 @@ def chart1():
 
     resp = ChartResponse(chart_data=chart_data, interactive_data=interactive_data)
     return resp.to_json()
+
+@question1_bp.route('/chart3', methods=['GET'])
+def chart3():
+    loader = EurostatDataLoader()
+    
+    geo_param = request.args.get('geo')
+    filters = {'geo': [geo_param]} if geo_param else None
+
+    df = loader.load_dataset('crim_off_cat', filters=filters)
+    
+    merge_categories = ["Sexual exploitation", "Sexual violence", "Sexual assault"]
+    df['iccs_merged'] = df['iccs'].apply(lambda x: "Sexual crimes" if x in merge_categories else x)
+    
+    crime_by_category = df.groupby('iccs_merged')['value'].sum().fillna(0)
+    
+    chart_data = {
+        "categories": crime_by_category.index.tolist(),
+        "values": crime_by_category.tolist()
+    }
+    
+    dims = loader.get_dimensions('crim_off_cat')
+    filter_geo = dims['geo']['codes'] if 'geo' in dims else []
+    interactive_data = {
+        "geo": filter_geo,
+    }
+    
+    resp = ChartResponse(chart_data=chart_data, interactive_data=interactive_data)
+    return resp.to_json()
