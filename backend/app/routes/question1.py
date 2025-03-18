@@ -20,32 +20,38 @@ class ChartResponse:
 def chart1():
     loader = EurostatDataLoader()
 
-    time_param = request.args.get('time')  # GET-Parameter
-    if time_param:
-        filters = {'time': [time_param]}
-    else:
+    time_params = request.args.getlist('time')
+    geo_params = request.args.getlist('geo')
+    
+    filters = {}
+    if time_params:
+        filters['time'] = time_params
+    if geo_params:
+        filters['geo'] = geo_params
+    if not filters:
         filters = None
 
     df = loader.load_dataset('crim_off_cat', filters=filters)
 
-    # we are merging some categories to simplify the chart because not all categories are using the same categories
     merge_categories = ["Sexual exploitation", "Sexual violence", "Sexual assault"]
     df['iccs_merged'] = df['iccs'].apply(lambda x: "Sexual crimes" if x in merge_categories else x)
 
     pivot = df.groupby(['geo', 'iccs_merged'])['value'].sum().unstack()
-
     most_frequent_crime = df.groupby('iccs_merged')['value'].sum().idxmax()
-
     pivot_data = pivot.to_dict()
 
     dims = loader.get_dimensions('crim_off_cat')
     filter_time = dims['time']['codes']
+    filter_geo = dims['geo']['codes'] if 'geo' in dims else []
 
     chart_data = {
         "pivot_data": pivot_data,
         "most_frequent_crime": most_frequent_crime
     }
-    interactive_data = {"time": filter_time}
+    interactive_data = {
+        "time": filter_time,
+        "geo": filter_geo
+    }
 
     resp = ChartResponse(chart_data=chart_data, interactive_data=interactive_data)
     return resp.to_json()
