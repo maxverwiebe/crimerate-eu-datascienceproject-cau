@@ -9,11 +9,9 @@ import {
   Legend,
 } from "recharts";
 
-import Question1Chart1 from "@/components/question1/chart1";
-import Question1Chart2 from "@/components/question1/chart2";
-import Question1Chart3 from "@/components/question1/chart3";
+import Question2Chart1 from "@/components/question2/chart1";
 
-const Question1 = () => {
+const Question2 = () => {
   return (
     <div>
       <h1>Question 1</h1>
@@ -24,11 +22,9 @@ const Question1 = () => {
         Sub question: How do trends in police recorded crimes differ between all
         EU countries? Whats the most happening crime in the EU?
       </h3>
-      <Question1Chart1 />
-      <Question1Chart2 />
-      <Question1Chart3 />
+      <Question2Chart1 />
     </div>
   );
 };
 
-export default Question1;
+export default Question2;
