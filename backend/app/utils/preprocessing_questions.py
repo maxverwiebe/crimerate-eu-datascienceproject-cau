@@ -49,3 +49,19 @@ def preprocess_q6_chart2(df):
     df = df[['geo', 'time', 'sex', 'leg_stat','value']]
     return df
 
+def preprocess_q3_chart1(df):
+    df = df.dropna()
+    df = df[['geo', 'time', 'sex', 'leg_stat', 'unit', 'value']]
+    df = df[df['sex'] == 'Total']
+    return df 
+
+
+def prerocess_q3_chart2(df):
+    # 1. Dein DataFrame vorbereiten
+    df = df.dropna()
+    df = df[['geo', 'time', 'sex', 'leg_stat', 'unit', 'value']]
+    filtered_df = df[df['sex'] != 'Total']
+    grouped_df = filtered_df.groupby(['geo', 'time', 'leg_stat', 'sex', 'unit'])['value'].sum().reset_index()
+    total_for_leg_stat = grouped_df.groupby(['geo', 'time', 'leg_stat', 'unit'])['value'].transform('sum')
+    grouped_df['percentage'] = (grouped_df['value'] / total_for_leg_stat) * 100
+    return grouped_df
