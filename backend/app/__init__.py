@@ -10,12 +10,14 @@ def create_app():
     from app.routes.question1 import question1_bp
     from app.routes.question7 import question7_bp
     from app.routes.question2 import question2_bp
+    from app.routes.question3 import question3_bp
 
     app.register_blueprint(question1_bp, url_prefix='/api/question1')
     app.register_blueprint(question5_bp, url_prefix='/api/question5')
     app.register_blueprint(question4_bp, url_prefix='/api/question4')
     app.register_blueprint(question7_bp, url_prefix='/api/question7')
     app.register_blueprint(question2_bp, url_prefix='/api/question2')
+    app.register_blueprint(question3_bp, url_prefix='/api/question3')
 
     @app.route('/')
     def index():

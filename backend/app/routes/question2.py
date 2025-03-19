@@ -22,8 +22,14 @@ def chart1():
 
     time_params = request.args.getlist('time')
     geo_params = request.args.get('geo')
+
+    filters = {}
+    if time_params:
+        filters['time'] = time_params
+    if not filters:
+        filters = None
     
-    df = loader.load_dataset('crim_gen_reg')
+    df = loader.load_dataset('crim_gen_reg', filters=filters)
     
     # Filter: Only rows where geo_code starts with the selected country
     df_country = df[df["geo_code"].str.startswith(geo_params)]

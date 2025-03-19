@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ScatterChart,
   Scatter,
@@ -15,6 +15,9 @@ const Question2Chart1 = () => {
   const [chartData, setChartData] = useState([]);
   const [interactiveData, setInteractiveData] = useState(null);
   const [filterCriteria, setFilterCriteria] = useState({});
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [currentTimeIndex, setCurrentTimeIndex] = useState(0);
+  const animationRef = useRef(null);
 
   // Formatiere die API-Daten in ein Array von Objekten
   const formatScatterData = (data) => {
@@ -56,9 +59,83 @@ const Question2Chart1 = () => {
       .catch((error) => console.error("Error fetching data:", error));
   }, [filterCriteria]);
 
+  // Stop animation when component unmounts
+  useEffect(() => {
+    return () => {
+      if (animationRef.current) {
+        clearTimeout(animationRef.current);
+      }
+    };
+  }, []);
+
   const handleFilterChange = (newFilters) => {
     console.log("Neue Filterkriterien:", newFilters);
     setFilterCriteria(newFilters);
+    // Reset animation when filters change manually
+    if (isAnimating) {
+      stopAnimation();
+    }
+  };
+
+  const startAnimation = () => {
+    if (
+      !interactiveData ||
+      !interactiveData.time ||
+      interactiveData.time.length === 0
+    ) {
+      return;
+    }
+
+    setIsAnimating(true);
+    animateNextTimeStep();
+  };
+
+  const stopAnimation = () => {
+    if (animationRef.current) {
+      clearTimeout(animationRef.current);
+      animationRef.current = null;
+    }
+    setIsAnimating(false);
+  };
+
+  const animateNextTimeStep = () => {
+    if (!interactiveData || !interactiveData.time) return;
+
+    const timeOptions = interactiveData.time;
+
+    // Set filter to only show current time step
+    const newFilterCriteria = {
+      ...filterCriteria,
+      time: [timeOptions[currentTimeIndex]],
+    };
+
+    setFilterCriteria(newFilterCriteria);
+
+    // Advance to next time step or loop back to beginning
+    const nextIndex = (currentTimeIndex + 1) % timeOptions.length;
+    setCurrentTimeIndex(nextIndex);
+
+    // Schedule next animation frame
+    animationRef.current = setTimeout(() => {
+      if (isAnimating) {
+        animateNextTimeStep();
+      }
+    }, 3000); // 1 second between frames
+  };
+
+  const toggleAnimation = () => {
+    if (isAnimating) {
+      stopAnimation();
+    } else {
+      startAnimation();
+    }
+  };
+
+  const getCurrentYear = () => {
+    if (interactiveData?.time && filterCriteria.time?.length === 1) {
+      return filterCriteria.time[0];
+    }
+    return "All Years";
   };
 
   return (
@@ -75,12 +152,26 @@ const Question2Chart1 = () => {
             interactiveData={interactiveData}
             onFilterChange={handleFilterChange}
           />
+
+          <div className="mt-4 flex items-center">
+            <button
+              onClick={toggleAnimation}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              {isAnimating ? "Stop Animation" : "Start Animation"}
+            </button>
+
+            {isAnimating && (
+              <span className="ml-4 font-bold text-lg animate-pulse">
+                Aktuelles Jahr: {getCurrentYear()}
+              </span>
+            )}
+          </div>
         </div>
       )}
       <ResponsiveContainer width="100%" height={500}>
         <ScatterChart margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
           <CartesianGrid strokeDasharray="3 3" />
-          {/* x-Achse als Kategorie */}
           <XAxis
             dataKey="city"
             type="category"

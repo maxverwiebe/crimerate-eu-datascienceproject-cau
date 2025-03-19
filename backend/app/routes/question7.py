@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from .es_dataloader import EurostatDataLoader
-from backend.app.utils import preprocessing_questions as pq
+#from backend.app.utils import preprocessing_questions as pq
 import pandas as pd
 
 question7_bp = Blueprint('question7', __name__)
