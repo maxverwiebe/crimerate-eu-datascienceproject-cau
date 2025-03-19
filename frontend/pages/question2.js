@@ -10,6 +10,7 @@ import {
 } from "recharts";
 
 import Question2Chart1 from "@/components/question2/chart1";
+import Question2Chart2 from "@/components/question2/chart2";
 
 const Question2 = () => {
   return (
@@ -23,6 +24,7 @@ const Question2 = () => {
         EU countries? Whats the most happening crime in the EU?
       </h3>
       <Question2Chart1 />
+      <Question2Chart2 />
     </div>
   );
 };

@@ -63,3 +63,57 @@ def chart1():
 
     resp = ChartResponse(chart_data=chart_data, interactive_data=interactive_data)
     return resp.to_json()
+
+
+# TODO FIX EMOTY PIVOT VALUES
+
+@question2_bp.route('/chart2', methods=['GET'])
+def chart2():
+    loader = EurostatDataLoader()
+
+    time_params = request.args.getlist('time')
+    geo_params = request.args.get('geo')  # Erwartet z. B. "BE" für Belgium
+
+    filters = {}
+    if time_params:
+        filters['time'] = time_params
+    if not filters:
+        filters = None
+    
+    df = loader.load_dataset('crim_gen_reg', filters=filters)
+
+    # Filter: Nur Zeilen, bei denen geo_code mit dem gewünschten Code beginnt
+    df_country = df[df["geo_code"].str.startswith(geo_params)]
+    
+    # Gruppiere die Daten nach Zeit und geo (z. B. Gesamtland vs. Region)
+    pivot_df = df_country.groupby(["time", "geo"])["value"].sum().reset_index()
+    
+    # Pivotieren: Zeit als Index, Spalten = geo, Werte = sum(value)
+    pivot_table = pivot_df.pivot(index="time", columns="geo", values="value").fillna(0)
+    pivot_table = pivot_table.sort_index()  # Sortiere nach Jahr
+
+    # Bereite die Chart-Daten vor:
+    times = pivot_table.index.tolist()
+    series = []
+    for geo in pivot_table.columns:
+        series.append({
+            "name": geo,
+            "data": pivot_table[geo].tolist()
+        })
+
+    chart_data = {
+        "times": times,
+        "series": series
+    }
+    
+    # Interaktive Daten: Dimensionen aus dem Loader
+    dims = loader.get_dimensions('crim_gen_reg')
+    filter_time = dims['time']['codes']
+    filter_geo = dims['geo']['codes'] if 'geo' in dims else []
+    interactive_data = {
+        "time": filter_time,
+        "geo": filter_geo
+    }
+
+    resp = ChartResponse(chart_data=chart_data, interactive_data=interactive_data)
+    return resp.to_json()

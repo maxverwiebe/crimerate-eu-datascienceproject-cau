@@ -120,7 +120,7 @@ const Question2Chart1 = () => {
       if (isAnimating) {
         animateNextTimeStep();
       }
-    }, 3000); // 1 second between frames
+    }, 1000); // 1 second between frames
   };
 
   const toggleAnimation = () => {
