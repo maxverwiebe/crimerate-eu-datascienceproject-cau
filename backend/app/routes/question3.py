@@ -50,3 +50,38 @@ def chart1():
         "chart_data": chart_data,
         "interactive_data": interactive_data
     })
+
+
+@question3_bp.route('/chart2', methods=['GET'])
+def chart2():
+    loader = EurostatDataLoader()
+
+    time_params = request.args.getlist('time')
+    geo_params = request.args.getlist('geo')
+    unit_param = request.args.get('unit', "Number")
+
+    filters = {}
+    if time_params:
+        filters['time'] = [int(t) for t in time_params]
+    if geo_params:
+        filters['geo'] = geo_params
+    if not filters:
+        filters = None
+
+    df = loader.load_dataset('crim_just_bri', filters=filters)
+
+    df = df.dropna(subset=["value"])
+
+    chart_data = df[["time", "geo", "geo_code", "value", "sex", "leg_stat"]].to_dict(orient="records")
+
+    dims = loader.get_dimensions('crim_just_bri')
+    interactive_data = {
+        "time": dims['time']['codes'],
+        "geo": dims.get('geo', {}).get('codes', []),
+        "unit": ["Number", "Per hundred thousand inhabitants"]
+    }
+
+    return jsonify({
+        "chart_data": chart_data,
+        "interactive_data": interactive_data
+    })
