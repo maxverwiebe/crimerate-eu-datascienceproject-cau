@@ -18,25 +18,49 @@ class ChartResponse:
 
 @question4_bp.route('/chart1', methods=['GET'])
 def chart1():
-    loader = EurostatDataLoader()
+    loader = EurostatDataLoader(cache_expiry=1800)
 
-    time_param = request.args.get('time') # GET parameter
-    if time_param:
-        filters = {'time': [time_param]}
-    else:
-        filters = None
+    time_param = request.args.get('time', default="2020")  # GET parameter
+    iccs_param = request.args.get('iccs', default="Intentional homicide")  # GET parameter
+    year = str(time_param)
 
-    df = loader.load_dataset('ilc_mddw06', filters=filters)
+    df1 = loader.load_dataset('tps00001')  # (Bevölkerungszahl - 2013 - 2024)
+    df2 = loader.load_dataset('tec00115')  # (BIP-Wachstum - 2013 - 2024)
+    df3 = loader.load_dataset('crim_off_cat')  # (Kriminalitätsrate - 2008 - 2022)
 
-    avg_crime_by_urbanisation = df.groupby('deg_urb')['value'].mean().dropna()
-    data = avg_crime_by_urbanisation.to_dict()
+    # Daten der Bevölkerung filtern und Duplikate entfernen
+    pop = df1[df1['time'] == year][['geo', 'value', 'geo_code']].drop_duplicates()
+    pop.columns = ['geo', 'population', 'geo_code']
 
-    ###
+    # Daten des BIP-Wachstums eindeutig filtern, NaNs entfernen
+    gdp = df2[df2['time'] == year][['geo', 'value']].drop_duplicates(subset=['geo']).dropna()
+    gdp.columns = ['geo', 'gdp_growth']
 
-    dims = loader.get_dimensions('ilc_mddw06')
-    filter_time = dims['time']['codes']
+    # Kriminalitätsdaten filtern und Duplikate entfernen
+    crime = df3[(df3['time'] == year) & (df3['iccs'] == iccs_param)][['geo', 'value']].drop_duplicates(subset=['geo'])
+    crime.columns = ['geo', 'crime_rate']
 
-    resp = ChartResponse(chart_data=data, interactive_data={"time": filter_time})
+    # Merge der DataFrames zu einem einzigen DataFrame
+    merged_df = pop.merge(gdp, on='geo').merge(crime, on='geo')
+
+    # Kriminalitätsrate pro 100.000 Einwohner berechnen
+    merged_df['crime_rate_per_100k'] = (merged_df['crime_rate'] / merged_df['population']) * 100000
+
+    # Filter rows with NaN values
+    filtered_df = merged_df.dropna(subset=['crime_rate_per_100k', 'gdp_growth'])
+
+    resp = ChartResponse(chart_data=filtered_df.to_dict(orient='records'), interactive_data={
+        "time": {
+            "values": df1['time'].unique().tolist(),
+            "multiple": False,
+            "default": time_param
+        },
+        "iccs": {
+            "values": df3['iccs'].unique().tolist(),
+            "multiple": False,
+            "default": iccs_param
+        }
+    })
 
     return resp.to_json()
 
