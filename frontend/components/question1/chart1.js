@@ -1,15 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
+
+const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question1Chart1 = () => {
   const [chartData, setChartData] = useState([]);
@@ -49,7 +42,8 @@ const Question1Chart1 = () => {
       .then((response) => response.json())
       .then((json) => {
         if (json.interactive_data && json.interactive_data.time) {
-          setYears(["all", ...json.interactive_data.time]);
+          // Setze years basierend auf der Struktur: hier nutzen wir die "values"
+          setYears(["all", ...json.interactive_data.time.values]);
         }
         if (json.chart_data && json.chart_data.pivot_data) {
           const formattedData = formatStackedData(json.chart_data.pivot_data);
@@ -68,6 +62,7 @@ const Question1Chart1 = () => {
     setFilterCriteria(newFilters);
   };
 
+  // Mapping der Farben für die einzelnen Straftatarten
   const crimeColorMapping = {
     "Acts against computer systems": "#FF6384",
     "Attempted intentional homicide": "#36A2EB",
@@ -90,6 +85,45 @@ const Question1Chart1 = () => {
     "Unlawful acts involving controlled drugs or precursors": "#34495E",
   };
 
+  // Erzeuge die ECharts Option für ein gestapeltes Balkendiagramm
+  const option = {
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "shadow",
+      },
+    },
+    legend: {
+      data: crimeTypes,
+      top: 10,
+    },
+    grid: {
+      left: "3%",
+      right: "4%",
+      bottom: "15%",
+      containLabel: true,
+    },
+    xAxis: {
+      type: "category",
+      data: chartData.map((d) => d.country),
+      axisLabel: {
+        rotate: 45,
+      },
+    },
+    yAxis: {
+      type: "value",
+    },
+    series: crimeTypes.map((crime) => ({
+      name: crime,
+      type: "bar",
+      stack: "a",
+      data: chartData.map((d) => d[crime] || 0),
+      itemStyle: {
+        color: crimeColorMapping[crime] || "#AAAAAA",
+      },
+    })),
+  };
+
   return (
     <div>
       <h2>Question 1 Chart</h2>
@@ -104,32 +138,7 @@ const Question1Chart1 = () => {
         />
       )}
       <div style={{ overflowX: "auto" }}>
-        <ResponsiveContainer width="100%" height={600}>
-          <BarChart
-            data={chartData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 120 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis
-              dataKey="country"
-              angle={-45}
-              textAnchor="end"
-              height={100}
-              interval={0}
-            />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            {crimeTypes.map((crime) => (
-              <Bar
-                key={crime}
-                dataKey={crime}
-                stackId="a"
-                fill={crimeColorMapping[crime] || "#AAAAAA"}
-              />
-            ))}
-          </BarChart>
-        </ResponsiveContainer>
+        <ReactECharts option={option} style={{ width: "100%", height: 600 }} />
       </div>
     </div>
   );

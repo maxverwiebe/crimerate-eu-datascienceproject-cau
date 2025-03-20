@@ -30,6 +30,7 @@ def chart1():
         filters = None
     
     df = loader.load_dataset('crim_gen_reg', filters=filters)
+    df = df.dropna()
     
     # Filter: Only rows where geo_code starts with the selected country
     df_country = df[df["geo_code"].str.startswith(geo_params)]
@@ -42,7 +43,7 @@ def chart1():
     }).fillna(0)
     
     # Get top 20 cities with highest aggregated values
-    top_20_cities = crime_by_city.sort_values("value", ascending=False).head(20)
+    top_20_cities = crime_by_city.sort_values("value", ascending=False).head(50)
     
     # Prepare chart data for frontend
     chart_data = {
@@ -55,10 +56,20 @@ def chart1():
     dims = loader.get_dimensions('crim_gen_reg')
     filter_time = dims['time']['codes']
     filter_geo = dims['geo']['codes'] if 'geo' in dims else []
+    filter_geo_labels = dims['geo']['labels'] if 'geo' in dims else []
     
     interactive_data = {
-        "time": filter_time,
-        "geo": filter_geo
+        "geo": {
+            "values": filter_geo,
+            "labels": filter_geo_labels,
+            "multiple": False,
+            "default": "DE"
+        },
+        "time": {
+            "values": filter_time,
+            "multiple": True,
+            "default": None
+        }
     }
 
     resp = ChartResponse(chart_data=chart_data, interactive_data=interactive_data)
@@ -111,8 +122,17 @@ def chart2():
     filter_time = dims['time']['codes']
     filter_geo = dims['geo']['codes'] if 'geo' in dims else []
     interactive_data = {
-        "time": filter_time,
-        "geo": filter_geo
+        "geo": {
+            "values": filter_geo,
+            "labels": dims['geo']['labels'] if 'geo' in dims else [],
+            "multiple": True,
+            "default": "BE"
+        },
+        "time": {
+            "values": filter_time,
+            "multiple": True,
+            "default": None
+        }
     }
 
     resp = ChartResponse(chart_data=chart_data, interactive_data=interactive_data)

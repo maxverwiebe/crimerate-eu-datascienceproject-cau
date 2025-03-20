@@ -92,6 +92,10 @@ const Question3Chart2 = () => {
 
   return (
     <div className="p-4">
+      <h3 className="text-xl">
+        Average distribution of bribery and corruption involvement by legal
+        status and gender
+      </h3>
       <InteractiveFilter
         interactiveData={interactiveData}
         onFilterChange={setFilters}

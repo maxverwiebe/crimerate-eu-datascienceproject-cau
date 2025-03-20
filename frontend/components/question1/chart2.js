@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   RadarChart,
   PolarGrid,
@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import InteractiveFilter from "../interactiveFilter";
 
+// Hilfsfunktion, die Pivot-Daten in ein Array von Objekten transformiert
 const formatRadarData = (pivotData) => {
   const countriesSet = new Set();
   Object.values(pivotData).forEach((countryData) => {
@@ -27,12 +28,49 @@ const formatRadarData = (pivotData) => {
   return { radarData, countries };
 };
 
+// Popup-Komponente für die Crime-Gruppen-Auswahl
+const CrimeGroupPopup = ({ allCrimes, hiddenCrimes, toggleCrime, onClose }) => {
+  const popupRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (popupRef.current && !popupRef.current.contains(event.target)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [onClose]);
+
+  return (
+    <div
+      ref={popupRef}
+      className="absolute z-50 bg-neutral-800 border border-gray-300 shadow-lg p-4 rounded"
+      style={{ right: 0, top: "100%" }}
+    >
+      <h4 className="text-white font-semibold mb-2">Hide Crime Groups</h4>
+      {allCrimes.map((crime) => (
+        <label key={crime} className="block text-white text-sm mb-1">
+          <input
+            type="checkbox"
+            checked={hiddenCrimes.includes(crime)}
+            onChange={() => toggleCrime(crime)}
+            className="mr-2"
+          />
+          {crime}
+        </label>
+      ))}
+    </div>
+  );
+};
+
 const Question1Chart2 = () => {
   const [chartData, setChartData] = useState([]);
   const [radarCountries, setRadarCountries] = useState([]);
   const [filterCriteria, setFilterCriteria] = useState({});
   const [interactiveData, setInteractiveData] = useState(null);
   const [hiddenCrimes, setHiddenCrimes] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
 
   const COLORS = [
     "#8884d8",
@@ -92,12 +130,11 @@ const Question1Chart2 = () => {
   );
 
   return (
-    <div>
-      <h2>Question 1 Radar Chart</h2>
-      <p>
-        Dieses Radar Chart zeigt Trends in police recorded crimes. Die Achsen
-        repräsentieren die Verbrechenskategorien, und es wird pro Land ein Radar
-        gezeichnet.
+    <div className="relative p-4">
+      <h2 className="text-2xl font-bold mb-4">Question 1 Radar Chart</h2>
+      <p className="mb-4">
+        This radar chart shows trends in police recorded crimes. The axes
+        represent the crime categories and one radar is drawn per country.
       </p>
       {interactiveData && (
         <InteractiveFilter
@@ -105,18 +142,21 @@ const Question1Chart2 = () => {
           onFilterChange={handleFilterChange}
         />
       )}
-      <div style={{ margin: "1rem 0" }}>
-        <h4>Hide Crime Groups:</h4>
-        {allCrimes.map((crime) => (
-          <label key={crime} style={{ display: "block" }}>
-            <input
-              type="checkbox"
-              checked={hiddenCrimes.includes(crime)}
-              onChange={() => toggleCrime(crime)}
-            />{" "}
-            {crime}
-          </label>
-        ))}
+      <div className="relative mb-4">
+        <button
+          onClick={() => setShowPopup(!showPopup)}
+          className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none"
+        >
+          {showPopup ? "Close Crime Groups" : "Hide Crime Groups"}
+        </button>
+        {showPopup && (
+          <CrimeGroupPopup
+            allCrimes={allCrimes}
+            hiddenCrimes={hiddenCrimes}
+            toggleCrime={toggleCrime}
+            onClose={() => setShowPopup(false)}
+          />
+        )}
       </div>
       <div style={{ overflowX: "auto" }}>
         <ResponsiveContainer width="100%" height={600}>

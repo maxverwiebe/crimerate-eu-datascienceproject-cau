@@ -20,8 +20,8 @@ const Question2 = () => {
       <h2 className="mb-5">add stuff here...</h2>
       <hr></hr>
       <h3 className="text-xl">
-        Sub question: How do trends in police recorded crimes differ between all
-        EU countries? Whats the most happening crime in the EU?
+        How has the trend of police-recorded crimes evolved in various cities
+        across the EU?:
       </h3>
       <Question2Chart1 />
       <Question2Chart2 />

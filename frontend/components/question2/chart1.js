@@ -1,23 +1,14 @@
-import React, { useState, useEffect, useRef } from "react";
-import {
-  ScatterChart,
-  Scatter,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
+import React, { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
+
+const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question2Chart1 = () => {
   const [chartData, setChartData] = useState([]);
   const [interactiveData, setInteractiveData] = useState(null);
   const [filterCriteria, setFilterCriteria] = useState({});
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [currentTimeIndex, setCurrentTimeIndex] = useState(0);
-  const animationRef = useRef(null);
+  const [topCount, setTopCount] = useState(10);
 
   // Formatiere die API-Daten in ein Array von Objekten
   const formatScatterData = (data) => {
@@ -29,7 +20,7 @@ const Question2Chart1 = () => {
     }));
   };
 
-  // Holt die Daten von der API basierend auf filterCriteria
+  // API-Call: Hole die Daten basierend auf filterCriteria
   useEffect(() => {
     let url = "http://127.0.0.1:5000/api/question2/chart1";
     const params = new URLSearchParams();
@@ -44,7 +35,6 @@ const Question2Chart1 = () => {
     } else {
       url += "?geo=DE";
     }
-
     fetch(url)
       .then((response) => response.json())
       .then((json) => {
@@ -59,92 +49,52 @@ const Question2Chart1 = () => {
       .catch((error) => console.error("Error fetching data:", error));
   }, [filterCriteria]);
 
-  // Stop animation when component unmounts
-  useEffect(() => {
-    return () => {
-      if (animationRef.current) {
-        clearTimeout(animationRef.current);
-      }
-    };
-  }, []);
-
   const handleFilterChange = (newFilters) => {
     console.log("Neue Filterkriterien:", newFilters);
     setFilterCriteria(newFilters);
-    // Reset animation when filters change manually
-    if (isAnimating) {
-      stopAnimation();
-    }
   };
 
-  const startAnimation = () => {
-    if (
-      !interactiveData ||
-      !interactiveData.time ||
-      interactiveData.time.length === 0
-    ) {
-      return;
-    }
+  // Sortiere die Daten absteigend nach value und schneide auf topCount zu.
+  const sortedData = [...chartData].sort((a, b) => b.value - a.value);
+  const displayedData = sortedData.slice(0, topCount);
 
-    setIsAnimating(true);
-    animateNextTimeStep();
-  };
-
-  const stopAnimation = () => {
-    if (animationRef.current) {
-      clearTimeout(animationRef.current);
-      animationRef.current = null;
-    }
-    setIsAnimating(false);
-  };
-
-  const animateNextTimeStep = () => {
-    if (!interactiveData || !interactiveData.time) return;
-
-    const timeOptions = interactiveData.time;
-
-    // Set filter to only show current time step
-    const newFilterCriteria = {
-      ...filterCriteria,
-      time: [timeOptions[currentTimeIndex]],
-    };
-
-    setFilterCriteria(newFilterCriteria);
-
-    // Advance to next time step or loop back to beginning
-    const nextIndex = (currentTimeIndex + 1) % timeOptions.length;
-    setCurrentTimeIndex(nextIndex);
-
-    // Schedule next animation frame
-    animationRef.current = setTimeout(() => {
-      if (isAnimating) {
-        animateNextTimeStep();
-      }
-    }, 1000); // 1 second between frames
-  };
-
-  const toggleAnimation = () => {
-    if (isAnimating) {
-      stopAnimation();
-    } else {
-      startAnimation();
-    }
-  };
-
-  const getCurrentYear = () => {
-    if (interactiveData?.time && filterCriteria.time?.length === 1) {
-      return filterCriteria.time[0];
-    }
-    return "All Years";
+  // Erzeuge ECharts-Daten: xAxis = Städte, series-Daten = Werte
+  const option = {
+    tooltip: {
+      trigger: "item",
+      formatter: "{b}<br/>Value: {c}",
+    },
+    xAxis: {
+      type: "category",
+      data: displayedData.map((d) => d.city),
+      axisLabel: {
+        rotate: -45,
+      },
+    },
+    yAxis: {
+      type: "value",
+    },
+    series: [
+      {
+        name: "Crime",
+        type: "scatter",
+        data: displayedData.map((d) => d.value),
+        symbolSize: 10,
+        itemStyle: {
+          color: "#8884d8",
+        },
+      },
+    ],
   };
 
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Question 2 Scatter Chart</h2>
       <p className="mb-4">
-        Diese Grafik zeigt die aggregierten Werte pro Stadt (geo) anhand der
-        Polizeiverbrechen. Die Städte werden auf der x-Achse (als Kategorien)
-        und die aggregierten Werte auf der y-Achse dargestellt.
+        This graph shows the aggregated values per city (geo) based on police
+        crimes. The cities are shown as categories on the x-axis, and the y-axis
+        shows the aggregated value. You can use the filter and the dropdown
+        (combo box) to control the points displayed.
       </p>
       {interactiveData && (
         <div className="mb-6">
@@ -152,39 +102,23 @@ const Question2Chart1 = () => {
             interactiveData={interactiveData}
             onFilterChange={handleFilterChange}
           />
-
-          <div className="mt-4 flex items-center">
-            <button
-              onClick={toggleAnimation}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-            >
-              {isAnimating ? "Stop Animation" : "Start Animation"}
-            </button>
-
-            {isAnimating && (
-              <span className="ml-4 font-bold text-lg animate-pulse">
-                Aktuelles Jahr: {getCurrentYear()}
-              </span>
-            )}
-          </div>
         </div>
       )}
-      <ResponsiveContainer width="100%" height={500}>
-        <ScatterChart margin={{ top: 20, right: 30, left: 20, bottom: 80 }}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis
-            dataKey="city"
-            type="category"
-            angle={-45}
-            textAnchor="end"
-            interval={0}
-          />
-          <YAxis dataKey="value" />
-          <Tooltip cursor={{ strokeDasharray: "3 3" }} />
-          <Legend />
-          <Scatter name="Crime" data={chartData} fill="#8884d8" />
-        </ScatterChart>
-      </ResponsiveContainer>
+      <div className="mb-4">
+        <label className="mr-2">Show Top Regions:</label>
+        <select
+          value={topCount}
+          onChange={(e) => setTopCount(parseInt(e.target.value))}
+        >
+          <option value={5}>Top 5</option>
+          <option value={10}>Top 10</option>
+          <option value={20}>Top 20</option>
+          <option value={50}>Top 50</option>
+        </select>
+      </div>
+      <div style={{ overflowX: "auto" }}>
+        <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
+      </div>
     </div>
   );
 };

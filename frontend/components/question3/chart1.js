@@ -24,18 +24,43 @@ const Question3Chart1 = () => {
       .catch(console.error);
   }, [filters]);
 
-  const countries = Array.from(new Set(data.map((d) => d.geo))).sort();
-  const years = Array.from(new Set(data.map((d) => d.time))).sort();
+  // Wenn keine Daten vorhanden, zeige "Lade Daten..."
+  if (!data || data.length === 0) {
+    return <div>Lade Daten...</div>;
+  }
 
-  const seriesData = data.map(({ geo, time, value }) => [
+  // Aggregiere doppelte Einträge basierend auf geo und time
+  const aggregatedData = Object.values(
+    data.reduce((acc, { geo, time, value }) => {
+      const key = `${geo}-${time}`;
+      if (!acc[key]) {
+        acc[key] = { geo, time, value: 0, count: 0 };
+      }
+      acc[key].value += value;
+      acc[key].count += 1;
+      return acc;
+    }, {})
+  ).map(({ geo, time, value, count }) => ({
+    geo,
+    time,
+    // Hier wird der Durchschnittswert verwendet – alternativ könnte man auch summieren
+    value: value / count,
+  }));
+
+  const countries = Array.from(
+    new Set(aggregatedData.map((d) => d.geo))
+  ).sort();
+  const years = Array.from(new Set(aggregatedData.map((d) => d.time))).sort();
+
+  const seriesData = aggregatedData.map(({ geo, time, value }) => [
     countries.indexOf(geo),
     years.indexOf(time),
     value,
   ]);
 
   const values = seriesData.map((d) => d[2]);
-  const min = Math.min(...values),
-    max = Math.max(...values);
+  const min = values.length > 0 ? Math.min(...values) : 0;
+  const max = values.length > 0 ? Math.max(...values) : 0;
 
   const option = {
     tooltip: {
@@ -45,7 +70,11 @@ const Question3Chart1 = () => {
           years[data[1]]
         }<br/>Value: ${data[2].toFixed(0)}`,
     },
-    xAxis: { type: "category", data: countries, axisLabel: { rotate: -45 } },
+    xAxis: {
+      type: "category",
+      data: countries,
+      axisLabel: { rotate: -45 },
+    },
     yAxis: { type: "category", data: years, inverse: true },
     visualMap: {
       min,
@@ -54,19 +83,29 @@ const Question3Chart1 = () => {
       orient: "horizontal",
       left: "center",
       bottom: 10,
+      inRange: {
+        color: ["#e0f3f8", "#005824"],
+      },
     },
     series: [
       {
         type: "heatmap",
         data: seriesData,
         label: { show: true, formatter: ({ value }) => value[2].toFixed(0) },
-        emphasis: { itemStyle: { borderColor: "#000", borderWidth: 1 } },
+        emphasis: {
+          itemStyle: { borderColor: "#000", borderWidth: 1 },
+          label: { show: false },
+        },
       },
     ],
   };
 
   return (
     <div className="p-4">
+      <h3 className="text-xl">
+        Absolut number of people involved in bribery and corruption across
+        European countries
+      </h3>
       <InteractiveFilter
         interactiveData={interactiveData}
         onFilterChange={setFilters}

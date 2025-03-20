@@ -48,9 +48,18 @@ def chart1():
         "pivot_data": pivot_data,
         "most_frequent_crime": most_frequent_crime
     }
+
     interactive_data = {
-        "time": filter_time,
-        "geo": filter_geo
+        "time": {
+            "values": filter_time,
+            "multiple": True,
+            "default": None
+        },
+        "geo": {
+            "values": filter_geo,
+            "multiple": True,
+            "default": None
+        }
     }
 
     resp = ChartResponse(chart_data=chart_data, interactive_data=interactive_data)
@@ -59,9 +68,16 @@ def chart1():
 @question1_bp.route('/chart3', methods=['GET'])
 def chart3():
     loader = EurostatDataLoader()
-    
+    time_params = request.args.getlist('time')
     geo_param = request.args.get('geo')
-    filters = {'geo': [geo_param]} if geo_param else None
+
+    filters = {}
+    if geo_param:
+        filters['geo'] = [geo_param]
+    if time_params:
+        filters['time'] = [time_params]
+    if not filters:
+        filters = None
 
     df = loader.load_dataset('crim_off_cat', filters=filters)
     
@@ -77,8 +93,20 @@ def chart3():
     
     dims = loader.get_dimensions('crim_off_cat')
     filter_geo = dims['geo']['codes'] if 'geo' in dims else []
+    filter_time = dims['time']['codes']
+
+
     interactive_data = {
-        "geo": filter_geo,
+        "geo": {
+            "values": filter_geo,
+            "multiple": True,
+            "default": None
+        },
+        "time": {
+            "values": filter_time,
+            "multiple": True,
+            "default": None
+        }
     }
     
     resp = ChartResponse(chart_data=chart_data, interactive_data=interactive_data)

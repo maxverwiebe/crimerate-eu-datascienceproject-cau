@@ -1,34 +1,14 @@
 import React, { useState, useEffect } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-import InteractiveFilter from "../interactiveFilter"; // Verwende den vorhandenen Filter
+import dynamic from "next/dynamic";
+import InteractiveFilter from "../interactiveFilter";
 
-// Custom Tick-Komponente für die Y-Achse, die lange Texte abschneidet
-const CustomizedYAxisTick = ({ x, y, payload, maxLength = 15 }) => {
-  let text = payload.value;
-  if (text.length > maxLength) {
-    text = text.substring(0, maxLength) + "...";
+const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
+
+const truncateLabel = (value, maxLength = 20) => {
+  if (value.length > maxLength) {
+    return value.substring(0, maxLength) + "...";
   }
-  return (
-    <text
-      x={x - 5}
-      y={y}
-      dy={4}
-      textAnchor="end"
-      fill="#666"
-      style={{ fontSize: 12 }}
-    >
-      {text}
-    </text>
-  );
+  return value;
 };
 
 const Question1Chart3 = () => {
@@ -36,29 +16,27 @@ const Question1Chart3 = () => {
   const [filterCriteria, setFilterCriteria] = useState({});
   const [interactiveData, setInteractiveData] = useState(null);
 
-  // Formatiere die API-Daten in ein Array von Objekten und sortiere absteigend (höchster Wert oben)
   const formatBarData = (data) => {
     const { categories, values } = data;
     const result = categories.map((cat, index) => ({
       category: cat,
       value: values[index],
     }));
-    // Sortiere absteigend: Das erste Element hat den höchsten Wert.
     return result.sort((a, b) => b.value - a.value);
   };
 
-  // API-Call: Hole Chart-Daten basierend auf den Filterkriterien
   useEffect(() => {
     let url = "http://127.0.0.1:5000/api/question1/chart3";
     const params = new URLSearchParams();
-
     if (filterCriteria.geo) {
       filterCriteria.geo.forEach((val) => params.append("geo", val));
+    }
+    if (filterCriteria.time) {
+      filterCriteria.time.forEach((val) => params.append("time", val));
     }
     if ([...params].length > 0) {
       url += "?" + params.toString();
     }
-
     fetch(url)
       .then((response) => response.json())
       .then((json) => {
@@ -78,40 +56,61 @@ const Question1Chart3 = () => {
     setFilterCriteria(newFilters);
   };
 
+  const yAxisData = chartData.map((item) => item.category);
+  const seriesData = chartData.map((item) => item.value);
+
+  const option = {
+    tooltip: {
+      trigger: "axis",
+      axisPointer: {
+        type: "shadow",
+      },
+    },
+    grid: {
+      left: "150px",
+      right: "30px",
+      bottom: "20px",
+      top: "20px",
+      containLabel: true,
+    },
+    xAxis: {
+      type: "value",
+    },
+    yAxis: {
+      type: "category",
+      data: yAxisData,
+      axisLabel: {
+        formatter: (value) => truncateLabel(value, 20),
+      },
+    },
+    series: [
+      {
+        name: "Value",
+        type: "bar",
+        data: seriesData,
+        itemStyle: {
+          color: "#8884d8",
+        },
+      },
+    ],
+  };
+
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">Question 1 Chart 3</h2>
       <p className="mb-4">
-        Dieses Balkendiagramm zeigt, wie die aggregierten Polizeiverbrechen nach
-        Kategorien in einem ausgewählten Land verteilt sind.
+        This bar chart shows how aggregated police crimes are distributed by
+        category in one or more selected countries.
       </p>
       {interactiveData && interactiveData.geo && (
-        <div className="mb-6">
-          <InteractiveFilter
-            interactiveData={interactiveData}
-            onFilterChange={handleFilterChange}
-          />
-        </div>
+        <InteractiveFilter
+          interactiveData={interactiveData}
+          onFilterChange={handleFilterChange}
+        />
       )}
-      <ResponsiveContainer width="100%" height={500}>
-        <BarChart
-          layout="vertical"
-          data={chartData}
-          margin={{ top: 20, right: 30, left: 150, bottom: 20 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis type="number" />
-          <YAxis
-            dataKey="category"
-            type="category"
-            tick={<CustomizedYAxisTick maxLength={20} />}
-            interval={0}
-          />
-          <Tooltip />
-          <Legend />
-          <Bar dataKey="value" fill="#8884d8" />
-        </BarChart>
-      </ResponsiveContainer>
+      <div style={{ overflowX: "auto" }}>
+        <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
+      </div>
     </div>
   );
 };

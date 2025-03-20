@@ -34,22 +34,36 @@ def chart1():
 
     df = loader.load_dataset('crim_just_bri', filters=filters)
     df = df[(df["sex"] == "Total") & (df["unit"] == unit_param)]
-
     df = df.dropna(subset=["value"])
 
     chart_data = df[["time", "geo", "geo_code", "value"]].to_dict(orient="records")
 
     dims = loader.get_dimensions('crim_just_bri')
+    # Hier erstellen wir für jede Dimension ein Dictionary mit den gewünschten Keys
     interactive_data = {
-        "time": dims['time']['codes'],
-        "geo": dims.get('geo', {}).get('codes', []),
-        "unit": ["Number", "Per hundred thousand inhabitants"]
+        "time": {
+            "values": dims['time']['codes'],
+            "multiple": True,  # Mehrfachauswahl möglich
+            "default": None
+        },
+        "geo": {
+            "values": dims.get('geo', {}).get('codes', []),
+            "labels": dims['geo']['labels'] if 'geo' in dims else [],
+            "multiple": True,
+            "default": None
+        },
+        "unit": {
+            "values": ["Number", "Per hundred thousand inhabitants"],
+            "multiple": False,  # Es wird nur ein Wert ausgewählt
+            "default": "Number"
+        }
     }
 
     return jsonify({
         "chart_data": chart_data,
         "interactive_data": interactive_data
     })
+
 
 
 @question3_bp.route('/chart2', methods=['GET'])
@@ -69,16 +83,28 @@ def chart2():
         filters = None
 
     df = loader.load_dataset('crim_just_bri', filters=filters)
-
     df = df.dropna(subset=["value"])
 
     chart_data = df[["time", "geo", "geo_code", "value", "sex", "leg_stat"]].to_dict(orient="records")
 
     dims = loader.get_dimensions('crim_just_bri')
     interactive_data = {
-        "time": dims['time']['codes'],
-        "geo": dims.get('geo', {}).get('codes', []),
-        "unit": ["Number", "Per hundred thousand inhabitants"]
+        "time": {
+            "values": dims['time']['codes'],
+            "multiple": True,
+            "default": None
+        },
+        "geo": {
+            "values": dims.get('geo', {}).get('codes', []),
+            "labels": dims['geo']['labels'] if 'geo' in dims else [],
+            "multiple": True,
+            "default": None
+        },
+        "unit": {
+            "values": ["Number", "Per hundred thousand inhabitants"],
+            "multiple": False,
+            "default": "Number"
+        }
     }
 
     return jsonify({

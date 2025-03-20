@@ -9,9 +9,7 @@ const Question2Chart2 = () => {
   const [interactiveData, setInteractiveData] = useState(null);
   const [filters, setFilters] = useState({ geo: ["BE"] }); // Standard: Belgium
 
-  // Neue States: Anzahl der Top-Datenpunkte und ob Bubbles angezeigt werden sollen
   const [topCount, setTopCount] = useState(10);
-  const [showBubbles, setShowBubbles] = useState(true);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -32,7 +30,6 @@ const Question2Chart2 = () => {
     return <div>Lade Daten...</div>;
   }
 
-  // Berechne für jede Serie (Stadt/Region) den Start-, Endwert, das Wachstum und die Gesamtsumme
   let bubbleData = chartData.series.map((s) => {
     const start = s.data[0];
     const end = s.data[s.data.length - 1];
@@ -43,16 +40,13 @@ const Question2Chart2 = () => {
       growth,
       lastValue: end,
       total,
-      // Werte: [Wachstum, letzter Wert, Gesamtwert]
       value: [growth, end, total],
     };
   });
 
-  // Sortiere absteigend nach Gesamtwert und nehme nur die Top-Datenpunkte
   bubbleData.sort((a, b) => b.total - a.total);
   bubbleData = bubbleData.slice(0, topCount);
 
-  // Definiere ein Farbschema
   const palette = [
     "#5470C6",
     "#91CC75",
@@ -65,7 +59,6 @@ const Question2Chart2 = () => {
     "#EA7CCC",
   ];
 
-  // Baue die Datenreihe so auf, dass jeder Datenpunkt einen eigenen itemStyle-Eintrag mit Farbe bekommt.
   const scatterData = bubbleData.map((d, index) => ({
     value: d.value,
     name: d.name,
@@ -74,34 +67,56 @@ const Question2Chart2 = () => {
     },
   }));
 
+  // Hinzufügen von DataZoom-Komponenten als DragControls
   const option = {
     tooltip: {
       formatter: (params) => {
         const d = bubbleData[params.dataIndex];
         return `
           ${d.name}<br/>
-          Wachstum: ${d.growth.toFixed(1)}%<br/>
-          Letzter Wert: ${d.lastValue}<br/>
-          Gesamt: ${d.total}
+          Growth: ${d.growth.toFixed(1)}%<br/>
+          Last Value: ${d.lastValue}<br/>
+          Total: ${d.total}
         `;
       },
     },
     xAxis: {
-      name: "Wachstum (%)",
+      name: "Growth (%)",
       type: "value",
       splitLine: { show: true },
     },
     yAxis: {
-      name: "Letzter Jahreswert",
+      name: "Last Value",
       type: "value",
       splitLine: { show: true },
     },
-    series: showBubbles
+    dataZoom: [
+      {
+        type: "inside", // DragZoom innerhalb des Diagramms
+        xAxisIndex: 0,
+        yAxisIndex: 0,
+        start: 0,
+        end: 100,
+      },
+      {
+        type: "slider", // Externer Slider (unten)
+        xAxisIndex: 0,
+        start: 0,
+        end: 100,
+      },
+      {
+        type: "slider", // Optionale y-Achse-Schieber (links)
+        yAxisIndex: 0,
+        left: 0,
+        start: 0,
+        end: 100,
+      },
+    ],
+    series: true
       ? [
           {
             type: "scatter",
             symbolSize: function (data) {
-              // Kleineren Multiplikator verwenden, damit die Blasen nicht zu groß sind
               return Math.sqrt(data[2]) * 0.1;
             },
             data: scatterData,
@@ -130,13 +145,15 @@ const Question2Chart2 = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">
-        Bubble Cluster Chart: Wachstum der intentional homicides
-      </h2>
+      <h2 className="text-2xl font-bold mb-4">Bubble Cluster Chart: Growth</h2>
       <p className="mb-4">
-        Dieses Diagramm zeigt für jede Stadt bzw. Region den prozentualen
-        Wachstum (x-Achse) und den Wert des letzten Jahres (y-Achse). Die Größe
-        der Blase entspricht dem Gesamtwert über alle Jahre.
+        This chart shows the percentage growth (x-axis) and the value of the
+        last year (y-axis) for each city or region. The size of the bubble
+        corresponds to the total value over all years. You can zoom in and out
+        of the diagram using DragControls (DataZoom). Growth: The percentage
+        change between the first year (start) and the last year (end). Last
+        Value: The value of the last year. Total: The sum of values across all
+        years.
       </p>
       {interactiveData && (
         <InteractiveFilter
@@ -144,9 +161,8 @@ const Question2Chart2 = () => {
           onFilterChange={handleFilterChange}
         />
       )}
-      {/* Zusätzliche Steuerungselemente */}
       <div className="mb-4">
-        <label className="mr-2">Top Anzahl anzeigen:</label>
+        <label className="mr-2">Show Top Regions</label>
         <select
           value={topCount}
           onChange={(e) => setTopCount(parseInt(e.target.value))}
@@ -156,15 +172,6 @@ const Question2Chart2 = () => {
           <option value={20}>Top 20</option>
           <option value={50}>Top 50</option>
         </select>
-        <label className="ml-4">
-          <input
-            type="checkbox"
-            checked={showBubbles}
-            onChange={(e) => setShowBubbles(e.target.checked)}
-            className="mr-1"
-          />
-          Bubbles anzeigen
-        </label>
       </div>
       <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
     </div>

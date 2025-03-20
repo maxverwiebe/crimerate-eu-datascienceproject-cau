@@ -116,6 +116,10 @@ const Question3Chart3 = () => {
 
   return (
     <div className="p-4">
+      <h3 className="text-xl">
+        Distribution of bribery and corruption involvement by legal status and
+        gender per country
+      </h3>
       <InteractiveFilter
         interactiveData={interactiveData}
         onFilterChange={setFilters}
