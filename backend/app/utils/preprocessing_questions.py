@@ -26,9 +26,10 @@ def preprocess_q7(df):
 
     return df
 
-def preprocess_q6_chart1(df):
+def preprocess_q6_chart2(df):
     df = df.dropna()
     df = df[df['age'] == '16 years or over']
+    df = df[df['lev_limit'] == 'Total']
     df = df[['geo', 'time', 'sex', 'value']]
     
     geo_values_to_remove = [
@@ -44,8 +45,8 @@ def preprocess_q6_chart1(df):
 
     return df  
 
-def preprocess_q6_chart2(df):
-    df.dropna()
+def preprocess_q6_chart1(df):
+    df = df.dropna()
     df = df[['geo', 'time', 'sex', 'leg_stat','value']]
     return df
 
