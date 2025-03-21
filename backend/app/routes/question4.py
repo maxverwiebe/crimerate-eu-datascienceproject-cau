@@ -65,11 +65,104 @@ def chart1():
     return resp.to_json()
 
 @question4_bp.route('/chart2', methods=['GET'])
-def chart2():
-    data = {"chart": "Chart 2", "values": [4, 3, 2, 1]}
-    return jsonify(data)
+def linechart():
+    loader = EurostatDataLoader(cache_expiry=1800)
+    geo_param = request.args.get('geo', default="DE")
+
+    df_pop = loader.load_dataset('tps00001')  # Bevölkerung
+    df_crime = loader.load_dataset('crim_off_cat')  # Kriminalität
+    df_gdp = loader.load_dataset('tec00115')  # BIP-Wachstum
+
+    pop = df_pop[df_pop['geo_code'] == geo_param][['time', 'value']].dropna()
+    pop.columns = ['year', 'population']
+    pop['year'] = pop['year'].astype(int)
+
+    crime = df_crime[df_crime['geo_code'] == geo_param][['time', 'value']].dropna()
+    crime.columns = ['year', 'crime_rate']
+    crime['year'] = crime['year'].astype(int)
+
+    gdp = df_gdp[df_gdp['geo_code'] == geo_param][['time', 'value']].dropna()
+    gdp.columns = ['year', 'gdp_growth']
+    gdp['year'] = gdp['year'].astype(int)
+
+    # Merge DataFrames
+    merged_df = crime.merge(pop, on='year').merge(gdp, on='year')
+
+    # Kriminalitätsrate berechnen
+    merged_df['crime_rate_per_100k'] = (merged_df['crime_rate'] / merged_df['population']) * 100000
+
+    # Median pro Jahr, falls mehrere Einträge vorhanden sind
+    median_crime = merged_df.groupby('year')['crime_rate_per_100k'].median().reset_index()
+    final_df = median_crime.merge(pop, on='year').merge(gdp, on='year')
+    final_df.columns = ['year', 'median_crime_rate', 'population', 'gdp_growth']
+
+    response = ChartResponse(
+        chart_data=final_df.to_dict(orient='records'),
+        interactive_data={
+            "geo": {
+                "values": df_pop['geo_code'].unique().tolist(),
+                "multiple": False,
+                "default": geo_param
+            }
+        }
+    )
+
+    return response.to_json()
 
 @question4_bp.route('/chart3', methods=['GET'])
 def chart3():
-    data = {"chart": "Chart 3", "values": [10, 20, 30, 40]}
-    return jsonify(data)
+    loader = EurostatDataLoader(cache_expiry=1800)
+
+    year = request.args.get('time', default="2020")
+    iccs = request.args.get('iccs', default="Intentional homicide")
+    geo_codes = request.args.getlist('geo')
+
+    df_pop = loader.load_dataset('tps00001')
+    df_gdp = loader.load_dataset('tec00115')
+    df_crime = loader.load_dataset('crim_off_cat')
+
+    # Bevölkerung pro Land im Jahr (Mittelwert)
+    pop = (
+        df_pop[df_pop['time'] == year]
+        .groupby(['geo', 'geo_code'], as_index=False)['value']
+        .mean()
+        .rename(columns={'geo': 'country', 'value': 'population'})
+    )
+
+    # BIP pro Land im Jahr (Mittelwert)
+    gdp = (
+        df_gdp[df_gdp['time'] == year]
+        .groupby(['geo', 'geo_code'], as_index=False)['value']
+        .mean()
+        .rename(columns={'geo': 'country', 'value': 'gdp_growth'})
+    )
+
+    # Kriminalität pro Land & ICCS im Jahr (Mittelwert)
+    crime = (
+        df_crime[(df_crime['time'] == year) & (df_crime['iccs'] == iccs)]
+        .groupby(['geo', 'geo_code'], as_index=False)['value']
+        .mean()
+        .rename(columns={'geo': 'country', 'value': 'crime_rate'})
+    )
+
+    # Merge & Berechnung
+    merged = pop.merge(gdp, on='geo_code').merge(crime, on='geo_code')
+    merged['crime_rate_per_100k'] = merged['crime_rate'] / merged['population'] * 100000
+
+    # Nur gewünschte Länder
+    all_codes = merged['geo_code'].unique().tolist()
+    valid_codes = [code for code in geo_codes if code in all_codes]
+    filtered = merged[merged['geo_code'].isin(valid_codes)]
+
+    resp = ChartResponse(
+        chart_data=filtered[['country','geo_code','population','gdp_growth','crime_rate_per_100k']]
+        .dropna()
+        .to_dict(orient='records'),
+        interactive_data={
+            "time": {"values": sorted(df_pop['time'].unique().tolist()), "multiple": False, "default": year},
+            "iccs": {"values": sorted(df_crime['iccs'].unique().tolist()), "multiple": False, "default": iccs},
+            "geo": {"values": sorted(all_codes), "multiple": True, "default": None}
+        }
+    )
+
+    return resp.to_json()

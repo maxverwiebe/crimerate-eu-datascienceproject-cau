@@ -21,6 +21,7 @@ const Question4Chart1 = () => {
       .then(({ chart_data, interactive_data }) => {
         setChartData(chart_data);
         setInteractiveData(interactive_data);
+        console.log(chart_data);
       })
       .catch(console.error);
   }, [selectedYear, selectedIccs]);
@@ -40,19 +41,19 @@ const Question4Chart1 = () => {
         const [population, gdpGrowth, crimeRate] = params.data.value;
         return `
           ${params.name}<br/>
-          Bevölkerung: ${population.toLocaleString()}<br/>
-          BIP-Wachstum: ${gdpGrowth}%<br/>
-          Kriminalitätsrate: ${crimeRate.toFixed(2)} pro 100.000 Einwohner
+          Population: ${population.toLocaleString()}<br/>
+          GDP growth: ${gdpGrowth}%<br/>
+          Crime rate: ${crimeRate.toFixed(2)} per 100.000 inhibitants
         `;
       },
     },
     xAxis: {
-      name: "Bevölkerungszahl",
+      name: "Total Population",
       type: "log",
       splitLine: { show: true },
     },
     yAxis: {
-      name: "BIP-Wachstum (%)",
+      name: "GDP Growth (%)",
       type: "value",
       splitLine: { show: true },
     },
@@ -85,14 +86,68 @@ const Question4Chart1 = () => {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">
-        Bubble Chart - Bevölkerung, BIP-Wachstum und Kriminalitätsrate pro
-        100.000 Einwohner ({selectedYear})
+        Bubble Chart - Population, GDP growth and crime rate per 100,000
+        inhabitants (2020) ({selectedYear})
       </h2>
       <p className="mb-4">
-        Dieses Diagramm zeigt die Bevölkerungszahl (logarithmisch, x-Achse), das
-        BIP-Wachstum (y-Achse) und die Kriminalitätsrate (Größe der Blase) pro
-        100.000 Einwohner für jedes Land.
+        This chart shows the population (logarithmic, x-axis), GDP growth
+        (y-axis) GDP growth (y-axis) and the crime rate (size of the bubble) per
+        100,000 inhabitants for each country.
       </p>
+
+      <section className="mx-auto p-6 bg-neutral-800 rounded-lg shadow-md mb-6">
+        <h2 className="text-2xl font-bold mb-4">
+          How to Interpret the Bubble Chart
+        </h2>
+        <p className="mb-4">
+          This bubble chart plots three dimensions of country‑level data
+          simultaneously:
+        </p>
+        <ul className="list-disc list-inside space-y-2 mb-4">
+          <li>
+            <strong>X‑Axis (log scale):</strong> Total population (larger values
+            → further right).
+          </li>
+          <li>
+            <strong>Y‑Axis:</strong> Annual GDP growth rate (%) (higher values →
+            further up).
+          </li>
+          <li>
+            <strong>Bubble Size:</strong> Crime rate per 100,000 inhabitants
+            (larger bubbles → higher crime rate).
+          </li>
+        </ul>
+        <p className="mb-4">
+          <strong>Key Insights:</strong>
+        </p>
+        <ul className="list-disc list-inside space-y-2">
+          <li>
+            Countries in the upper‑right quadrant combine large populations with
+            strong economic growth.
+          </li>
+          <li>
+            Small bubbles high on the Y‑axis indicate fast-growing economies
+            with relatively low crime.
+          </li>
+          <li>
+            Large bubbles low on the Y‑axis signal high crime rates despite
+            sluggish or negative GDP growth.
+          </li>
+          <li>
+            Very small bubbles on the far left represent low‑population
+            countries, where crime rates can appear exaggerated relative to
+            size.
+          </li>
+          <li>
+            Use the slider to adjust bubble scaling if the differences in crime
+            rate are too subtle or too extreme.
+          </li>
+          <li>
+            Hover over a bubble for exact values (population, GDP growth, crime
+            rate) via tooltip.
+          </li>
+        </ul>
+      </section>
 
       {interactiveData && (
         <InteractiveFilter
