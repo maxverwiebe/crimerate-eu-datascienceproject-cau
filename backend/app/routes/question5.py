@@ -24,56 +24,53 @@ question5_bp = Blueprint('question5', __name__)
 def chart2():
     loader = EurostatDataLoader(cache_expiry=1800)
 
-    time_param = request.args.get('time', default="2020")  # Jahr aus GET-Parameter
-    year = str(time_param)
+    year = request.args.get('time', "2020")
+    crime_type = request.args.get('iccs', "Intentional homicide") # ALL CRIMES DOES NOT MAKE SENSE HERE
+    geo_filter = request.args.get('geo', "")
 
-    # 🔹 Lade relevante Datensätze
-    df_police = loader.load_dataset('crim_just_job')  # Polizei-, Gerichts- & Justizpersonal
-    df_crime = loader.load_dataset('crim_off_cat')  # Kriminalitätsraten
+    df_police = loader.load_dataset('crim_just_job')
+    df_crime = loader.load_dataset('crim_off_cat')
 
-    # 🔹 Polizeidaten verarbeiten (nur "Police officers", sex = "Total")
-    df_police_filtered = df_police[(df_police['isco08'] == 'Police officers') & (df_police['sex'] == 'Total')]
-    df_police_pivot = df_police_filtered.pivot_table(index=['geo', 'time'], columns='unit', values='value', aggfunc='sum').reset_index()
-    df_police_pivot.columns = ['geo', 'time',  'police_total','police_per_100k']
-    df_police_pivot = df_police_pivot[df_police_pivot['time'] == year].dropna()
+    av_times = sorted(df_police['time'].unique().tolist())
 
-    # 🔹 Kriminalitätsdaten verarbeiten (Total & per 100k)
-    df_crime_filtered = df_crime[df_crime['time'] == year][['geo', 'iccs', 'value', 'unit']]
+    df_police = (
+        df_police.query("isco08=='Police officers' and sex=='Total'")
+        .pivot_table(index=['geo','time'], columns='unit', values='value')
+        .rename(columns={'Number':'police_total','Per hundred thousand inhabitants':'police_per_100k'})
+        .reset_index()
+    ).query("time==@year").dropna()
 
-    df_crime_total = df_crime_filtered[df_crime_filtered['unit'] == 'Number'][['geo', 'iccs', 'value']]
-    df_crime_per_100k = df_crime_filtered[df_crime_filtered['unit'] == 'Per hundred thousand inhabitants'][['geo', 'iccs', 'value']]
-
-    df_crime_total.columns = ['geo', 'iccs', 'crime_total']
-    df_crime_per_100k.columns = ['geo', 'iccs', 'crime_per_100k']
-
-    # 🔹 Mergen der Kriminalitätsdaten
-    df_crime_final = pd.merge(df_crime_total, df_crime_per_100k, on=['geo', 'iccs'], how='outer').dropna()
-
-    # 🔹 Gesamtkriminalität berechnen
-    df_total_crime = df_crime_final.groupby(['geo']).agg({'crime_total': 'sum', 'crime_per_100k': 'sum'}).reset_index()
-    df_total_crime['iccs'] = 'Total Crimes'
+    df_crime_filtered = df_crime.query("time==@year")
     
-    df_crime_final = pd.concat([df_crime_final, df_total_crime], ignore_index=True)
+    if crime_type not in df_crime_filtered['iccs'].unique():
+        crime_type = "Total Crimes"
+    
+    # Create pivot table with crime statistics
+    df_total = (
+        df_crime_filtered
+        .pivot_table(index=['geo','time','iccs'], columns='unit', values='value', aggfunc='sum')
+        .reset_index()
+    )
+    
+    # Rename columns if they exist
+    if 'Number' in df_total.columns:
+        df_total = df_total.rename(columns={'Number':'crime_total'})
+    if 'Per hundred thousand inhabitants' in df_total.columns:
+        df_total = df_total.rename(columns={'Per hundred thousand inhabitants':'crime_per_100k'})
+    
+    # Filter for the selected crime type and handle missing values
+    df_total = df_total.query("iccs==@crime_type").dropna(subset=['geo', 'time'])
 
-    # 🔹 Merge mit Polizeidaten
-    merged_df = df_crime_final.merge(df_police_pivot, on='geo', how='left').dropna()
+    if geo_filter:
+        df_total = df_total[df_total['geo'].isin(geo_filter.split(','))]
 
-    # 🔹 JSON-Response
-    response_json = {
-        "chart_data": merged_df.to_dict(orient='records'),
+    merged = df_total.merge(df_police, on=['geo','time'], how='inner').dropna()
+
+    dims = loader.get_dimensions('crim_off_cat')
+    return jsonify({
+        "chart_data": merged.to_dict(orient='records'),
         "interactive_data": {
-            "time": {
-                "values": df_crime['time'].unique().tolist(),
-                "multiple": False,
-                "default": time_param
-            },
-            "crime_types": {
-                "values": df_crime['iccs'].unique().tolist(),
-                "multiple": False,
-                "default": "Total Crimes"
-            }
+            "time": {"values": av_times, "multiple": False, "default": year},
+            "iccs": {"values": sorted(df_crime['iccs'].unique().tolist()), "multiple": False, "default": crime_type},
         }
-    }
-
-    return jsonify(response_json)
-
+    })
