@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
+import ExplanationSection from "../explanationSection";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -78,7 +79,7 @@ const Question4Chart2 = () => {
         Crime Rate, Population and GDP Over Time
       </h2>
 
-      <section className="bg-neutral-800 text-white p-6 rounded-lg shadow-md mb-6">
+      <ExplanationSection title="Show Chart Explanation">
         <h3 className="text-xl font-semibold mb-2">How to Read This Chart</h3>
         <p className="mb-2">
           This line chart compares three key indicators for a selected country
@@ -101,7 +102,7 @@ const Question4Chart2 = () => {
           Use the filter above to switch between countries and observe how crime
           trends relate to demographic and economic changes.
         </p>
-      </section>
+      </ExplanationSection>
 
       {interactiveData && (
         <InteractiveFilter

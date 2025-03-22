@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
 
+import ExplanationSection from "../explanationSection";
+
+import SectionHeader from "../sectionHeader";
+
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question4Chart1 = () => {
@@ -95,7 +99,7 @@ const Question4Chart1 = () => {
         100,000 inhabitants for each country.
       </p>
 
-      <section className="mx-auto p-6 bg-neutral-800 rounded-lg shadow-md mb-6">
+      <ExplanationSection title="Show Chart Explanation">
         <h2 className="text-2xl font-bold mb-4">
           How to Interpret the Bubble Chart
         </h2>
@@ -147,7 +151,7 @@ const Question4Chart1 = () => {
             rate) via tooltip.
           </li>
         </ul>
-      </section>
+      </ExplanationSection>
 
       {interactiveData && (
         <InteractiveFilter

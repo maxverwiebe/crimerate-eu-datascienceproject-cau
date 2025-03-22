@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
+import ExplanationSection from "../explanationSection";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -73,7 +74,7 @@ const Question4Chart3 = () => {
         Parallel Coordinates – Population, GDP & Criminality ({filters.time})
       </h2>
 
-      <section className="mx-auto p-6 bg-neutral-800 rounded-lg shadow-md mb-6">
+      <ExplanationSection title="Show Chart Explanation">
         <h2 className="text-2xl font-bold mb-4">
           How to Interpret the Parallel Coordinates Chart
         </h2>
@@ -121,7 +122,7 @@ const Question4Chart3 = () => {
             despite a large population) are immediately visible.
           </li>
         </ul>
-      </section>
+      </ExplanationSection>
 
       {interactiveData && (
         <InteractiveFilter
