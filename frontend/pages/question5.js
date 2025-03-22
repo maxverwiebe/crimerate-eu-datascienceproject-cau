@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Question5Chart1 from "@/components/question5/chart1";
+import Question5Chart2 from "@/components/question5/chart2";
 
 
 
@@ -16,6 +17,7 @@ const Question5 = () => {
                 EU countries? Whats the most happening crime in the EU?
             </h3>
             <Question5Chart1 />
+            <Question5Chart2 />
 
 
         </div>
