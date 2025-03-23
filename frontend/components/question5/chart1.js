@@ -25,7 +25,11 @@ const Question5Chart1 = () => {
 
     console.log(filters);
 
-    fetch(`http://127.0.0.1:5000/api/question5/chart1?${params.toString()}`)
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_API
+      }/api/question5/chart1?${params.toString()}`
+    )
       .then((res) => res.json())
       .then(({ chart_data, interactive_data }) => {
         setChartData(chart_data);

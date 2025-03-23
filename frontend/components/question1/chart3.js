@@ -26,7 +26,7 @@ const Question1Chart3 = () => {
   };
 
   useEffect(() => {
-    let url = "http://127.0.0.1:5000/api/question1/chart3";
+    let url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question1/chart3`;
     const params = new URLSearchParams();
     if (filterCriteria.geo) {
       filterCriteria.geo.forEach((val) => params.append("geo", val));
