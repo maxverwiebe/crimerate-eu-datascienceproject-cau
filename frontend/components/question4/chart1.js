@@ -17,7 +17,9 @@ const Question4Chart1 = () => {
 
   useEffect(() => {
     fetch(
-      `http://127.0.0.1:5000/api/question4/chart1?time=${selectedYear}&iccs=${encodeURIComponent(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_API
+      }/api/question4/chart1?time=${selectedYear}&iccs=${encodeURIComponent(
         selectedIccs
       )}`
     )

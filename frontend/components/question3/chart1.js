@@ -15,7 +15,11 @@ const Question3Chart1 = () => {
     filters.time?.forEach((t) => params.append("time", t));
     if (filters.unit) params.append("unit", filters.unit);
 
-    fetch(`http://127.0.0.1:5000/api/question3/chart1?${params.toString()}`)
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_API
+      }/api/question3/chart1?${params.toString()}`
+    )
       .then((res) => res.json())
       .then(({ chart_data, interactive_data }) => {
         setInteractiveData(interactive_data);

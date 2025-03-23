@@ -42,7 +42,7 @@ export default class Question7Chart1Mini extends PureComponent {
 
   fetchData() {
     const { filterCriteria } = this.state;
-    let url = "http://127.0.0.1:5000/api/question7/chart1";
+    let url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question7/chart1`;
     const params = new URLSearchParams();
     Object.keys(filterCriteria).forEach((key) => {
       filterCriteria[key].forEach((value) => {

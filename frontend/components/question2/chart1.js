@@ -22,7 +22,7 @@ const Question2Chart1 = () => {
 
   // API-Call: Hole die Daten basierend auf filterCriteria
   useEffect(() => {
-    let url = "http://127.0.0.1:5000/api/question2/chart1";
+    let url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question2/chart1`;
     const params = new URLSearchParams();
     if (filterCriteria.time) {
       filterCriteria.time.forEach((val) => params.append("time", val));

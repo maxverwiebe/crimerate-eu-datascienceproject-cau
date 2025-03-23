@@ -14,7 +14,11 @@ const Question4Chart2 = () => {
     const params = new URLSearchParams();
     if (filters.geo) params.append("geo", filters.geo);
 
-    fetch(`http://127.0.0.1:5000/api/question4/chart2?${params.toString()}`)
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_API
+      }/api/question4/chart2?${params.toString()}`
+    )
       .then((res) => res.json())
       .then(({ chart_data, interactive_data }) => {
         setChartData(chart_data);

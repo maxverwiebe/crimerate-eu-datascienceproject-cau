@@ -62,7 +62,11 @@ const Question3Chart4 = () => {
     if (filters.unit) params.append("unit", filters.unit);
 
     // Verwende hier den API-Endpunkt für Chart4
-    fetch(`http://127.0.0.1:5000/api/question3/chart2?${params.toString()}`)
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_API
+      }/api/question3/chart2?${params.toString()}`
+    )
       .then((res) => res.json())
       .then(({ chart_data, interactive_data }) => {
         setInteractiveData(interactive_data);

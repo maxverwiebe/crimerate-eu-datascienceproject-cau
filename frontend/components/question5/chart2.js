@@ -44,7 +44,11 @@ const Question5Chart2 = () => {
     if (filters.iccs) params.append("iccs", filters.iccs);
     if (filters.geo?.length) params.append("geo", filters.geo.join(","));
 
-    fetch(`http://127.0.0.1:5000/api/question5/chart2?${params.toString()}`)
+    fetch(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_API
+      }/api/question5/chart2?${params.toString()}`
+    )
       .then((res) => res.json())
       .then(({ chart_data, interactive_data }) => {
         setChartData(chart_data);
