@@ -18,6 +18,60 @@ class ChartResponse:
 
 question5_bp = Blueprint('question5', __name__)
 
+@question5_bp.route('/chart1', methods=['GET'])
+def chart1():
+    loader = EurostatDataLoader(cache_expiry=1800)
+    geo_param = request.args.get('geo')
+    if geo_param:
+        geos = geo_param.split(',')  # split manually
+    else:
+        geos = []
+    crime_type = request.args.get('iccs', "Intentional homicide")
+
+    df_police = loader.load_dataset('crim_just_job')
+    df_crime = loader.load_dataset('crim_off_cat')
+
+    df_police = (
+        df_police.query("isco08=='Police officers' and sex=='Total'")
+                 .pivot_table(index=['geo','time', 'geo_code'], columns='unit', values='value')
+                 .rename(columns={'Per hundred thousand inhabitants':'police_per_100k'})
+                 .reset_index().dropna(subset=['police_per_100k'])
+    )
+    df_crime = (
+        df_crime.query("iccs==@crime_type")
+                .pivot_table(index=['geo','time', 'geo_code'], columns='unit', values='value')
+                .rename(columns={'Per hundred thousand inhabitants':'crime_per_100k'})
+                .reset_index().dropna(subset=['crime_per_100k'])
+    )
+
+    # Filter by geo codes if provided
+    if geos:
+        df_police = df_police[df_police['geo_code'].isin(geos)]
+        df_crime = df_crime[df_crime['geo_code'].isin(geos)]
+
+    merged = df_police.merge(df_crime, on=['geo','time'], how='inner').dropna()
+    merged['time'] = merged['time'].astype(int)
+
+    times = sorted(merged['time'].unique().tolist())
+    series = [
+        {
+            "name": geo,
+            "data": merged[merged.geo == geo]
+                      .sort_values('time')
+                      .apply(lambda r: [r.time, r.police_per_100k, r.crime_per_100k], axis=1)
+                      .tolist()
+        }
+        for geo in sorted(merged['geo'].unique())
+    ]
+
+    dims = loader.get_dimensions('crim_off_cat')
+    interactive_data = {
+        "geo": {"values": dims['geo']['codes'], "multiple": True, "default": None},
+        "iccs": {"values": dims['iccs']['codes'], "multiple": False, "default": crime_type}
+    }
+
+    return jsonify({"chart_data": {"times": times, "series": series}, "interactive_data": interactive_data})
+
 
 
 @question5_bp.route('/chart2', methods=['GET'])
