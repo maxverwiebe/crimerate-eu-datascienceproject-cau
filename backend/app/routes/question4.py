@@ -1,20 +1,10 @@
 from flask import Blueprint, jsonify, request
 from .es_dataloader import EurostatDataLoader
 import pandas as pd
+from .chart_response import ChartResponse
 
 question4_bp = Blueprint('question4', __name__)
 
-# just a helper class to format the response
-class ChartResponse:
-    def __init__(self, chart_data, interactive_data=None):
-        self.chart_data = chart_data
-        self.interactive_data = interactive_data
-
-    def to_json(self):
-        return jsonify({
-            "chart_data": self.chart_data,
-            "interactive_data": self.interactive_data
-        })
 
 @question4_bp.route('/chart1', methods=['GET'])
 def chart1():
