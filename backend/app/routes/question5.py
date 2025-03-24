@@ -67,7 +67,7 @@ def chart1():
     dims = loader.get_dimensions('crim_off_cat')
     interactive_data = {
         "geo": {"values": dims['geo']['codes'], "multiple": True, "default": None},
-        "iccs": {"values": dims['iccs']['codes'], "multiple": False, "default": crime_type}
+        "iccs": {"values": dims['iccs']['labels'], "multiple": False, "default": crime_type}
     }
 
     return jsonify({"chart_data": {"times": times, "series": series}, "interactive_data": interactive_data})
