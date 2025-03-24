@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
-
+import ErrorAlert from "../errorAlert";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question6Chart1 = () => {
@@ -12,19 +12,20 @@ const Question6Chart1 = () => {
   const [selectedLegStat, setSelectedLegStat] = useState("Convicted person");
   const [selectedUnit, setSelectedUnit] = useState("Number");
   const [selectedCountries, setSelectedCountries] = useState([]);
-
+  const [error, setError] = useState(null);
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/question6/chart1`)
       .then((response) => response.json())
       .then((json) => {
-        console.log("Received:", json);
         setChartData(json.chart_data);
         const availableYears = Object.keys(json.chart_data["Albania"]);
         setYears(availableYears);
 
         const countries = Object.keys(json.chart_data);
         setCountriesList(countries);
-        setSelectedCountries(countries); // Setze als Standard alle Länder
+        setSelectedCountries(countries);
+
+        setError(json.error);
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
@@ -157,7 +158,11 @@ const Question6Chart1 = () => {
         interactiveData={interactiveData}
         onFilterChange={handleFilterChange}
       />
-
+      {error && (
+        <div className="text-red-500 mt-4">
+          <ErrorAlert message={error}></ErrorAlert>
+        </div>
+      )}
       <ReactECharts option={option} style={{ width: "100%", height: 600 }} />
     </div>
   );

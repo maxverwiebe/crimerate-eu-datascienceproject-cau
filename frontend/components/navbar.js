@@ -46,7 +46,10 @@ export default function Navbar() {
   return (
     <nav className="bg-blue-600 text-white px-6 py-4 shadow-md relative">
       <div className="container mx-auto flex justify-between items-center">
-        <span className="text-xl font-semibold">MyApp</span>
+        <div className="flex-col">
+          <span className="text-xl font-semibold mr-2">Crime in Europe</span>
+          <span className="text-s">Data Science Project @ CAU</span>
+        </div>
         <button
           className="focus:outline-none"
           onClick={() => setIsOpen((prev) => !prev)}

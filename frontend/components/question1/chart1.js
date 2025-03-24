@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
+import ChartHeader from "../chartHeader";
+import ExplanationSection from "../explanationSection";
+import ErrorAlert from "../errorAlert";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -10,6 +13,7 @@ const Question1Chart1 = () => {
   const [years, setYears] = useState([]);
   const [filterCriteria, setFilterCriteria] = useState({});
   const [interactiveData, setInteractiveData] = useState(null);
+  const [error, setError] = useState(null);
 
   const formatStackedData = (pivotData) => {
     const countries = {};
@@ -42,7 +46,6 @@ const Question1Chart1 = () => {
       .then((response) => response.json())
       .then((json) => {
         if (json.interactive_data && json.interactive_data.time) {
-          // Setze years basierend auf der Struktur: hier nutzen wir die "values"
           setYears(["all", ...json.interactive_data.time.values]);
         }
         if (json.chart_data && json.chart_data.pivot_data) {
@@ -53,6 +56,10 @@ const Question1Chart1 = () => {
         if (json.interactive_data) {
           setInteractiveData(json.interactive_data);
         }
+
+        if (json.error) {
+          setError(json.error);
+        }
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, [filterCriteria]);
@@ -62,7 +69,6 @@ const Question1Chart1 = () => {
     setFilterCriteria(newFilters);
   };
 
-  // Mapping der Farben für die einzelnen Straftatarten
   const crimeColorMapping = {
     "Acts against computer systems": "#FF6384",
     "Attempted intentional homicide": "#36A2EB",
@@ -85,10 +91,10 @@ const Question1Chart1 = () => {
     "Unlawful acts involving controlled drugs or precursors": "#34495E",
   };
 
-  // Erzeuge die ECharts Option für ein gestapeltes Balkendiagramm
   const option = {
     tooltip: {
       trigger: "axis",
+      appendToBody: true,
       axisPointer: {
         type: "shadow",
       },
@@ -96,6 +102,12 @@ const Question1Chart1 = () => {
     legend: {
       data: crimeTypes,
       top: 10,
+      type: "scroll",
+      textStyle: {
+        fontSize: 12,
+      },
+      itemWidth: 10,
+      itemHeight: 10,
     },
     grid: {
       left: "3%",
@@ -126,17 +138,30 @@ const Question1Chart1 = () => {
 
   return (
     <div>
-      <h2>Question 1 Chart</h2>
-      <p>
-        This chart shows how trends in police recorded crimes differ between EU
-        countries.
-      </p>
+      <ChartHeader
+        title={"Crime categories reported by different countries in EU"}
+      />
+      <ExplanationSection title="Explanation">
+        <p>
+          This chart shows the number of crimes reported by different countries
+          in the EU. Each country is represented by a stack of bars, where each
+          bar represents a different crime category. The height of each stack
+          represents the total number of crimes reported by that country.
+        </p>
+      </ExplanationSection>
       {interactiveData && (
         <InteractiveFilter
           interactiveData={interactiveData}
           onFilterChange={handleFilterChange}
         />
       )}
+
+      {error && (
+        <div className="text-red-500 mt-4">
+          <ErrorAlert message={error}></ErrorAlert>
+        </div>
+      )}
+
       <div style={{ overflowX: "auto" }}>
         <ReactECharts option={option} style={{ width: "100%", height: 600 }} />
       </div>

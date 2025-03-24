@@ -1,4 +1,4 @@
-import React, { PureComponent } from "react";
+import React, { useState, useEffect } from "react";
 import {
   BarChart,
   Bar,
@@ -10,124 +10,98 @@ import {
   Legend,
 } from "recharts";
 import InteractiveFilter from "@/components/interactiveFilter";
+import ErrorAlert from "../errorAlert";
 
-export default class Question7Chart2 extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-      histogramData: [],
-      interactiveData: null,
-      filterCriteria: {},
-      usePercentage: true,
-    };
-  }
+export default function Question7Chart2() {
+  const [histogramData, setHistogramData] = useState([]);
+  const [interactiveData, setInteractiveData] = useState(null);
+  const [filterCriteria, setFilterCriteria] = useState({});
+  const [usePercentage, setUsePercentage] = useState(true);
+  const [error, setError] = useState(null);
 
-  componentDidMount() {
-    this.fetchData();
-  }
+  useEffect(() => {
+    async function fetchData() {
+      setError(null);
+      const params = new URLSearchParams();
+      Object.entries(filterCriteria).forEach(([key, values]) =>
+        values.forEach((value) => params.append(key, value))
+      );
+      params.append("display", usePercentage ? "percentage" : "whole");
 
-  componentDidUpdate(prevProps, prevState) {
-    if (
-      prevState.filterCriteria !== this.state.filterCriteria ||
-      prevState.usePercentage !== this.state.usePercentage
-    ) {
-      this.fetchData();
-    }
-  }
+      const url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question7/chart2${
+        params.toString() ? `?${params}` : ""
+      }`;
 
-  fetchData() {
-    const { filterCriteria, usePercentage } = this.state;
-    let url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question7/chart2`;
-    const params = new URLSearchParams();
+      try {
+        const response = await fetch(url);
+        const json = await response.json();
+        if (json.error) throw new Error(json.error);
 
-    // Für jeden Filter die Parametervorgabe
-    Object.keys(filterCriteria).forEach((key) => {
-      filterCriteria[key].forEach((value) => {
-        params.append(key, value);
-      });
-    });
-    // Füge zusätzlich den Parameter "display" hinzu, der die Anzeige steuert
-    params.append("display", usePercentage ? "percentage" : "whole");
+        const raw = json.chart_data || {};
+        const formatted = Object.entries(raw).map(([age, value]) => ({
+          age,
+          percentage: value,
+        }));
 
-    if ([...params].length > 0) {
-      url += "?" + params.toString();
+        setHistogramData(formatted);
+        setInteractiveData(json.interactive_data);
+        setError(json.error);
+      } catch (err) {
+        setError(err.message || "Failed to load data");
+      }
     }
 
-    fetch(url)
-      .then((response) => response.json())
-      .then((json) => {
-        if (json.chart_data) {
-          const rawData = json.chart_data;
-          const histogramData = Object.keys(rawData).map((age) => ({
-            age,
-            percentage: rawData[age], // wird auch für "whole" verwendet, wenn der API-Endpunkt dies liefert
-          }));
-          this.setState({
-            histogramData,
-            interactiveData: json.interactive_data,
-          });
-        }
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  }
+    fetchData();
+  }, [filterCriteria, usePercentage]);
 
-  handleFilterChange = (filterObj) => {
-    console.log("Neue Filterkriterien:", filterObj);
-    this.setState({ filterCriteria: filterObj });
-  };
+  return (
+    <div className="p-5">
+      <h2 className="text-2xl font-bold mb-4">
+        Crime rate distribution by age groups
+      </h2>
+      <p className="mb-4">
+        Histogram: x-axis = age groups, y-axis ={" "}
+        {usePercentage ? "percentage" : "total crimes"}
+      </p>
 
-  handleDisplayToggle = (e) => {
-    this.setState({ usePercentage: e.target.checked });
-  };
+      <label className="mb-4 inline-flex items-center">
+        <input
+          type="checkbox"
+          className="mr-2"
+          checked={usePercentage}
+          onChange={() => setUsePercentage((prev) => !prev)}
+        />
+        Use Percentage
+      </label>
 
-  render() {
-    const { histogramData, interactiveData, usePercentage } = this.state;
-
-    return (
-      <div>
-        <h2 className="text-2xl font-bold mb-4">
-          Crime rate distribution by age groups
-        </h2>
-        <p className="mb-4">
-          Histogram: x-axis = age groups, y-axis ={" "}
-          {usePercentage ? "percentage" : "total crimes"}
-        </p>
-        <div className="mb-4">
-          <label>
-            <input
-              type="checkbox"
-              checked={usePercentage}
-              onChange={this.handleDisplayToggle}
-            />{" "}
-            Use Percentage
-          </label>
+      {interactiveData && (
+        <div className="mb-6">
+          <InteractiveFilter
+            interactiveData={interactiveData}
+            onFilterChange={setFilterCriteria}
+          />
         </div>
-        {interactiveData && (
-          <div className="mb-6">
-            <InteractiveFilter
-              interactiveData={interactiveData}
-              onFilterChange={this.handleFilterChange}
-            />
-          </div>
-        )}
-        <ResponsiveContainer width="100%" height={500}>
-          <BarChart
-            data={histogramData}
-            margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-          >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="age" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar
-              dataKey="percentage"
-              fill="#8884d8"
-              name={usePercentage ? "Percentage" : "Total Crimes"}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    );
-  }
+      )}
+
+      {error && <ErrorAlert message={error} onClose={() => setError(null)} />}
+
+      <ResponsiveContainer width="100%" height={500}>
+        <BarChart
+          data={histogramData}
+          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="age" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar
+            dataKey="percentage"
+            name={usePercentage ? "Percentage" : "Total Crimes"}
+            fill="#8884d8"
+          />
+        </BarChart>
+      </ResponsiveContainer>
+    </div>
+  );
 }

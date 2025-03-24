@@ -4,14 +4,15 @@ import InteractiveFilter from "../interactiveFilter";
 import SectionHeader from "../sectionHeader";
 import ExplanationSection from "../explanationSection";
 import ChartHeader from "../chartHeader";
-
+import ErrorAlert from "../errorAlert";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question5Chart1 = () => {
   const [chartData, setChartData] = useState({ times: [], series: [] });
   const [interactiveData, setInteractiveData] = useState(null);
   const [filters, setFilters] = useState({});
-
+  const [bubbleScaler, setBubbleScaler] = useState(25);
+  const [error, setError] = useState(null);
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.geo) {
@@ -31,10 +32,10 @@ const Question5Chart1 = () => {
       }/api/question5/chart1?${params.toString()}`
     )
       .then((res) => res.json())
-      .then(({ chart_data, interactive_data }) => {
+      .then(({ chart_data, interactive_data, error }) => {
         setChartData(chart_data);
         setInteractiveData(interactive_data);
-        console.log(chart_data);
+        setError(error);
       })
       .catch(console.error);
   }, [filters]);
@@ -81,7 +82,7 @@ const Question5Chart1 = () => {
       type: "scatter",
       encode: { x: 1, y: 0, tooltip: [1, 0, 2] },
       data,
-      symbolSize: (val) => Math.sqrt(val[2]) * 5,
+      symbolSize: (data) => Math.sqrt(data[2]) * bubbleScaler,
       emphasis: { label: { show: true, formatter: "{b}", fontWeight: "bold" } },
     })),
   };
@@ -101,6 +102,22 @@ const Question5Chart1 = () => {
           interactiveData={interactiveData}
           onFilterChange={setFilters}
         />
+      )}
+      <div className="mb-4">
+        <label className="mr-2">Bubble Scaler:</label>
+        <input
+          type="range"
+          min="1"
+          max="50"
+          value={bubbleScaler}
+          onChange={(e) => setBubbleScaler(Number(e.target.value))}
+        />
+        <span className="ml-2">{bubbleScaler}</span>
+      </div>
+      {error && (
+        <div className="text-red-500 mt-4">
+          <ErrorAlert message={error}></ErrorAlert>
+        </div>
       )}
       <ReactECharts
         option={option}
