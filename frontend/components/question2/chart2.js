@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
-
+import ChartHeader from "../chartHeader";
+import ExplanationSection from "../explanationSection";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question2Chart2 = () => {
@@ -149,27 +150,71 @@ const Question2Chart2 = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Bubble Cluster Chart: Growth</h2>
-      <p className="mb-4">
-        This chart shows the percentage growth (x-axis) and the value of the
-        last year (y-axis) for each city or region. The size of the bubble
-        corresponds to the total value over all years. You can zoom in and out
-        of the diagram using DragControls (DataZoom). Growth: The percentage
-        change between the first year (start) and the last year (end). Last
-        Value: The value of the last year. Total: The sum of values across all
-        years.
-      </p>
+      <ChartHeader title="Regional Crime Dynamics: Growth vs Current Level" />
+      <ExplanationSection title="Explanation">
+        <p>
+          This chart is a bubble scatter plot that simultaneously visualizes
+          three different metrics for each region (e.g., city or administrative
+          area) in the selected country over the chosen time period. Each bubble
+          corresponds to one region.
+        </p>
+        <p>
+          <strong>X‑Axis (Growth %):</strong> Shows the percentage change in
+          total reported crime between the first and last selected year. A
+          positive value indicates an increase in crime, while a negative value
+          indicates a decrease.
+        </p>
+        <p>
+          <strong>Y‑Axis (Last Value):</strong> Represents the absolute number
+          of reported crimes in the last year of the selected time range,
+          providing a snapshot of the current crime level for each region.
+        </p>
+        <p>
+          <strong>Bubble Size (Total):</strong> Reflects the cumulative number
+          of reported crimes across all selected years. Larger bubbles indicate
+          regions with a higher overall crime volume over time.
+        </p>
+        <p>
+          Regions are sorted by total crime volume, and you can choose to
+          display the top 5, 10, 20, or 50 regions using the "Show Top Regions"
+          dropdown. This helps focus on areas with the greatest overall crime
+          burden.
+        </p>
+        <p>
+          <strong>Interpretation:</strong>
+          <ul>
+            <li>
+              Top‑right quadrant: Regions with high growth and high current
+              crime levels (rapidly worsening hotspots).
+            </li>
+            <li>
+              Bottom‑right quadrant: Regions with strong growth but lower
+              absolute crime levels (emerging hotspots).
+            </li>
+            <li>
+              Top‑left quadrant: Regions with high crime levels that have
+              remained stable or declined over time.
+            </li>
+            <li>
+              Bottom‑left quadrant: Regions with lower crime volumes and little
+              change over time.
+            </li>
+          </ul>
+        </p>
+      </ExplanationSection>
+
       {interactiveData && (
         <InteractiveFilter
           interactiveData={interactiveData}
           onFilterChange={handleFilterChange}
         />
       )}
-      <div className="mb-4">
-        <label className="mr-2">Show Top Regions</label>
+      <div className="mb-4 mt-4 flex items-center">
+        <label className="mr-3 font-medium">Show Top Regions:</label>
         <select
           value={topCount}
           onChange={(e) => setTopCount(parseInt(e.target.value))}
+          className="px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value={5}>Top 5</option>
           <option value={10}>Top 10</option>
