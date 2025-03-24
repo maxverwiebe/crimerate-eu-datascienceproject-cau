@@ -1,6 +1,9 @@
 import { useState } from "react";
 
-export default function ExplanationSection({ title = "Erklärung", children }) {
+export default function ExplanationSection({
+  title = "Explanation",
+  children,
+}) {
   const [expanded, setExpanded] = useState(false);
 
   return (
