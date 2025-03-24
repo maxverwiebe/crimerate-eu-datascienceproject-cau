@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
+import ChartHeader from "../chartHeader";
+import ExplanationSection from "../explanationSection";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -79,6 +81,7 @@ const Question1Chart3 = () => {
     yAxis: {
       type: "category",
       data: yAxisData,
+      inverse: true,
       axisLabel: {
         formatter: (value) => truncateLabel(value, 20),
       },
@@ -97,11 +100,10 @@ const Question1Chart3 = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Question 1 Chart 3</h2>
-      <p className="mb-4">
-        This bar chart shows how aggregated police crimes are distributed by
-        category in one or more selected countries.
-      </p>
+      <ChartHeader title="Frequency of crimes in one or more countries in a certain year" />
+      <ExplanationSection title="Explanation">
+        <p>TODO</p>
+      </ExplanationSection>
       {interactiveData && interactiveData.geo && (
         <InteractiveFilter
           interactiveData={interactiveData}
