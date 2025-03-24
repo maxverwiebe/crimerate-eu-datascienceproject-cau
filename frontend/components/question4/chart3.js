@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
 import ExplanationSection from "../explanationSection";
-
+import ErrorAlert from "../errorAlert";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question4Chart3 = () => {
   const [data, setData] = useState([]);
   const [interactiveData, setInteractiveData] = useState(null);
+  const [error, setError] = useState(null);
 
   const [filters, setFilters] = useState({
     time: "2020",
@@ -27,9 +28,10 @@ const Question4Chart3 = () => {
       }/api/question4/chart3?${params.toString()}`
     )
       .then((res) => res.json())
-      .then(({ chart_data, interactive_data }) => {
+      .then(({ chart_data, interactive_data, error }) => {
         setData(chart_data);
         setInteractiveData(interactive_data);
+        setError(error);
       })
       .catch(console.error);
   }, [filters]);
@@ -133,6 +135,12 @@ const Question4Chart3 = () => {
           interactiveData={interactiveData}
           onFilterChange={handleFilterChange}
         />
+      )}
+
+      {error && (
+        <div className="text-red-500 mt-4">
+          <ErrorAlert message={error}></ErrorAlert>
+        </div>
       )}
       <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
     </div>

@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
 import ChartHeader from "../chartHeader";
 import ExplanationSection from "../explanationSection";
+import ErrorAlert from "../errorAlert";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -14,7 +15,6 @@ const formatEchartsRadar = (pivotData, hiddenCrimes) => {
     ...new Set(Object.values(pivotData).flatMap((cd) => Object.keys(cd))),
   ];
 
-  // Build indicator array with max for each crime
   const indicators = crimes.map((crime) => {
     const max = Math.max(
       ...countries.map((country) => pivotData[crime][country] || 0)
@@ -22,7 +22,6 @@ const formatEchartsRadar = (pivotData, hiddenCrimes) => {
     return { name: crime, max: Math.ceil(max * 1.1) || 1 };
   });
 
-  // Series: one entry per country
   const series = countries.map((country) => ({
     name: country,
     value: crimes.map((crime) => pivotData[crime][country] || 0),
@@ -89,6 +88,7 @@ const Question1Chart2 = () => {
   const [filterCriteria, setFilterCriteria] = useState({});
   const [hiddenCrimes, setHiddenCrimes] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -99,6 +99,10 @@ const Question1Chart2 = () => {
       const json = await fetch(url).then((r) => r.json());
       setPivotData(json.chart_data.pivot_data || {});
       setInteractiveData(json.interactive_data);
+
+      if (json.error) {
+        setError(json.error);
+      }
     };
     fetchData().catch(console.error);
   }, [filterCriteria]);
@@ -176,6 +180,12 @@ const Question1Chart2 = () => {
           )}
         </div>
       </div>
+      {error && (
+        <div className="text-red-500 mt-4">
+          <ErrorAlert message={error}></ErrorAlert>
+        </div>
+      )}
+
       <div style={{ overflowX: "auto" }}>
         <ReactECharts option={option} style={{ width: "100%", height: 600 }} />
       </div>

@@ -5,6 +5,7 @@ import InteractiveFilter from "../interactiveFilter";
 import ExplanationSection from "../explanationSection";
 
 import SectionHeader from "../sectionHeader";
+import ErrorAlert from "../errorAlert";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -14,6 +15,7 @@ const Question4Chart1 = () => {
   const [selectedYear, setSelectedYear] = useState("2020");
   const [selectedIccs, setSelectedIccs] = useState("Intentional homicide");
   const [bubbleScaler, setBubbleScaler] = useState(25);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetch(
@@ -24,10 +26,10 @@ const Question4Chart1 = () => {
       )}`
     )
       .then((res) => res.json())
-      .then(({ chart_data, interactive_data }) => {
+      .then(({ chart_data, interactive_data, error }) => {
         setChartData(chart_data);
         setInteractiveData(interactive_data);
-        console.log(chart_data);
+        setError(error);
       })
       .catch(console.error);
   }, [selectedYear, selectedIccs]);
@@ -173,6 +175,12 @@ const Question4Chart1 = () => {
         />
         <span className="ml-2">{bubbleScaler}</span>
       </div>
+
+      {error && (
+        <div className="text-red-500 mt-4">
+          <ErrorAlert message={error}></ErrorAlert>
+        </div>
+      )}
 
       <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
     </div>

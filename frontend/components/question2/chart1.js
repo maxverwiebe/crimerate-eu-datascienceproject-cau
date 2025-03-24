@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
+import ChartHeader from "../chartHeader";
+import ExplanationSection from "../explanationSection";
+import ErrorAlert from "../errorAlert";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -9,8 +12,8 @@ const Question2Chart1 = () => {
   const [interactiveData, setInteractiveData] = useState(null);
   const [filterCriteria, setFilterCriteria] = useState({});
   const [topCount, setTopCount] = useState(10);
+  const [error, setError] = useState(null);
 
-  // Formatiere die API-Daten in ein Array von Objekten
   const formatScatterData = (data) => {
     const { cities, geo_codes, values } = data;
     return cities.map((city, index) => ({
@@ -20,7 +23,6 @@ const Question2Chart1 = () => {
     }));
   };
 
-  // API-Call: Hole die Daten basierend auf filterCriteria
   useEffect(() => {
     let url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question2/chart1`;
     const params = new URLSearchParams();
@@ -45,6 +47,9 @@ const Question2Chart1 = () => {
         if (json.interactive_data) {
           setInteractiveData(json.interactive_data);
         }
+        if (json.error) {
+          setError(json.error);
+        }
       })
       .catch((error) => console.error("Error fetching data:", error));
   }, [filterCriteria]);
@@ -54,11 +59,9 @@ const Question2Chart1 = () => {
     setFilterCriteria(newFilters);
   };
 
-  // Sortiere die Daten absteigend nach value und schneide auf topCount zu.
   const sortedData = [...chartData].sort((a, b) => b.value - a.value);
   const displayedData = sortedData.slice(0, topCount);
 
-  // Erzeuge ECharts-Daten: xAxis = Städte, series-Daten = Werte
   const option = {
     tooltip: {
       trigger: "item",
@@ -89,13 +92,13 @@ const Question2Chart1 = () => {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Question 2 Scatter Chart</h2>
-      <p className="mb-4">
-        This graph shows the aggregated values per city (geo) based on police
-        crimes. The cities are shown as categories on the x-axis, and the y-axis
-        shows the aggregated value. You can use the filter and the dropdown
-        (combo box) to control the points displayed.
-      </p>
+      <ChartHeader title={"Crime Rate by Region"} />
+      <ExplanationSection
+        explanation={
+          "This chart shows the crime rate in different regions. The crime rate is calculated as the number of crimes per 100,000 inhabitants."
+        }
+      />
+
       {interactiveData && (
         <div className="mb-6">
           <InteractiveFilter
@@ -116,6 +119,11 @@ const Question2Chart1 = () => {
           <option value={50}>Top 50</option>
         </select>
       </div>
+      {error && (
+        <div className="text-red-500 mt-4">
+          <ErrorAlert message={error}></ErrorAlert>
+        </div>
+      )}
       <div style={{ overflowX: "auto" }}>
         <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
       </div>

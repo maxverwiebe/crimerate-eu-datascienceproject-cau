@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
 import ChartHeader from "../chartHeader";
 import ExplanationSection from "../explanationSection";
+import ErrorAlert from "../errorAlert";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -17,6 +18,7 @@ const Question1Chart3 = () => {
   const [chartData, setChartData] = useState([]);
   const [filterCriteria, setFilterCriteria] = useState({});
   const [interactiveData, setInteractiveData] = useState(null);
+  const [error, setError] = useState(null);
 
   const formatBarData = (data) => {
     const { categories, values } = data;
@@ -48,6 +50,10 @@ const Question1Chart3 = () => {
         }
         if (json.interactive_data) {
           setInteractiveData(json.interactive_data);
+        }
+
+        if (json.error) {
+          setError(json.error);
         }
       })
       .catch((error) => console.error("Error fetching data:", error));
@@ -109,6 +115,11 @@ const Question1Chart3 = () => {
           interactiveData={interactiveData}
           onFilterChange={handleFilterChange}
         />
+      )}
+      {error && (
+        <div className="text-red-500 mt-4">
+          <ErrorAlert message={error}></ErrorAlert>
+        </div>
       )}
       <div style={{ overflowX: "auto" }}>
         <ReactECharts option={option} style={{ width: "100%", height: 500 }} />

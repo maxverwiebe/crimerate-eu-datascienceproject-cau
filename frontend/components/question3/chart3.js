@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
+import ErrorAlert from "../errorAlert";
 
 const buildSunburstData = (data) => {
   const filteredData = data.filter((item) => item.sex !== "Total");
@@ -43,7 +44,7 @@ const Question3Chart3 = () => {
   const [data, setData] = useState([]);
   const [interactiveData, setInteractiveData] = useState(null);
   const [filters, setFilters] = useState({});
-
+  const [error, setError] = useState(null);
   useEffect(() => {
     const params = new URLSearchParams();
     filters.geo?.forEach((g) => params.append("geo", g));
@@ -57,9 +58,10 @@ const Question3Chart3 = () => {
       }/api/question3/chart2?${params.toString()}`
     )
       .then((res) => res.json())
-      .then(({ chart_data, interactive_data }) => {
+      .then(({ chart_data, interactive_data, error }) => {
         setInteractiveData(interactive_data);
         setData(chart_data);
+        setError(error);
       })
       .catch(console.error);
   }, [filters]);
@@ -128,6 +130,11 @@ const Question3Chart3 = () => {
         interactiveData={interactiveData}
         onFilterChange={setFilters}
       />
+      {error && (
+        <div className="text-red-500 mt-4">
+          <ErrorAlert message={error}></ErrorAlert>
+        </div>
+      )}
       <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
     </div>
   );
