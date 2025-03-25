@@ -1,189 +1,123 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
+import ChartHeader from "../chartHeader";
+import ExplanationSection from "../explanationSection";
 import ErrorAlert from "../errorAlert";
+
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question6Chart2 = () => {
-  const [chartData, setChartData] = useState({});
-  const [years, setYears] = useState([]);
-  const [countriesList, setCountriesList] = useState([]);
-  const [selectedYear, setSelectedYear] = useState([]);
-  const [selectedUnit, setSelectedUnit] = useState("Number");
-  const [selectedCountries, setSelectedCountries] = useState(["Albania"]);
+  const [chartData, setChartData] = useState({
+    years: [],
+    male: [],
+    female: [],
+  });
+  const [filterCriteria, setFilterCriteria] = useState({});
+  const [interactiveData, setInteractiveData] = useState(null);
   const [error, setError] = useState(null);
+
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/question6/chart2`)
-      .then((response) => response.json())
+    let url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question6/chart2`;
+    const params = new URLSearchParams();
+
+    if (filterCriteria.time) {
+      filterCriteria.time.forEach((t) => params.append("time", t));
+    }
+    if (filterCriteria.geo) {
+      filterCriteria.geo.forEach((g) => params.append("geo", g));
+    }
+
+    if (filterCriteria.leg_stat) {
+      filterCriteria.leg_stat.forEach((l) => params.append("leg_stat", l));
+    }
+
+    if ([...params].length) url += `?${params.toString()}`;
+
+    fetch(url)
+      .then((res) => res.json())
       .then((json) => {
-        setChartData(json.chart_data);
-
-        // Filter only years that exist in the data for the selected country
-        const countryData = json.chart_data["Albania"]; // Adjust for selected country dynamically
-        const availableYears = countryData ? Object.keys(countryData) : [];
-        setYears(availableYears);
-
-        const countries = Object.keys(json.chart_data);
-        setCountriesList(countries);
-        setSelectedCountries([countries[0]]); // Default to first country
-
-        setError(json.error);
-      })
-      .catch((error) => console.error("Error fetching data:", error));
-  }, []);
-
-  const formatData = () => {
-    const country = selectedCountries[0]; // Only one country
-    if (!chartData[country]) return {}; // If no data for selected country, return empty
-
-    const yearsData =
-      selectedYear.length > 0 ? selectedYear : Object.keys(chartData[country]);
-
-    const processedData = {};
-
-    yearsData.forEach((year) => {
-      const yearData = chartData[country] && chartData[country][year];
-      if (yearData) {
-        const statData = yearData["Convicted person"]; // Assuming you want to show "Convicted person"
-
-        const maleVal =
-          statData && statData["Males"] ? statData["Males"][selectedUnit] : 0;
-        const femaleVal =
-          statData && statData["Females"]
-            ? statData["Females"][selectedUnit]
-            : 0;
-
-        if (!processedData[year]) {
-          processedData[year] = { male: 0, female: 0 };
+        if (json.error) {
+          setError(json.error);
+          return;
         }
+        setInteractiveData(json.interactive_data);
+        setChartData(json.chart_data);
+      })
+      .catch((e) => setError(e.message));
+  }, [filterCriteria]);
 
-        processedData[year].male += maleVal;
-        processedData[year].female += femaleVal;
-      }
-    });
-
-    return processedData;
+  const handleFilterChange = (newFilters) => {
+    setFilterCriteria(newFilters);
   };
 
-  const processedData = formatData();
-
-  // ECharts Option
   const option = {
-    title: {
-      text: `Verurteilte Personen - ${selectedYear.join(", ")}`,
-      left: "center",
-    },
     tooltip: {
       trigger: "axis",
-      axisPointer: {
-        type: "shadow",
-      },
-      formatter: (params) => {
-        let tooltipContent = `${params[0].name}<br/>`;
-        params.forEach((param) => {
-          const value = param.value === 0 ? "Data not available" : param.value;
-          tooltipContent += `${param.seriesName}: ${value}<br/>`;
-        });
-        return tooltipContent;
-      },
+      axisPointer: { type: "shadow" },
+      appendToBody: true,
     },
-    legend: {
-      top: 30,
-      data: ["Males", "Females"],
-    },
-    grid: {
-      left: "5%",
-      right: "5%",
-      bottom: "10%",
-      containLabel: true,
-    },
+    legend: { data: ["Males", "Females"], top: 10 },
+    grid: { left: "3%", right: "4%", bottom: "15%", containLabel: true },
     xAxis: {
       type: "category",
-      data:
-        selectedYear.length > 0
-          ? selectedYear.sort((a, b) => a - b)
-          : Object.keys(processedData).sort((a, b) => a - b),
-      name: "Year",
+      data: chartData.years,
+      axisLabel: { rotate: 45 },
     },
-    yAxis: {
-      type: "value",
-      name: selectedUnit,
-    },
+    yAxis: { type: "value" },
     series: [
-      {
-        name: "Males",
-        type: "bar",
-        stack: "gender",
-        data:
-          selectedYear.length > 0
-            ? selectedYear
-                .sort((a, b) => a - b)
-                .map((year) =>
-                  processedData[year] ? processedData[year].male : 0
-                )
-            : [],
-        itemStyle: { color: "#5470C6" }, // Blue for males
-        barWidth: "40%",
-      },
-      {
-        name: "Females",
-        type: "bar",
-        stack: "gender",
-        data:
-          selectedYear.length > 0
-            ? selectedYear
-                .sort((a, b) => a - b)
-                .map((year) =>
-                  processedData[year] ? processedData[year].female : 0
-                )
-            : [],
-        itemStyle: { color: "#EE6666" }, // Red for females
-        barWidth: "40%",
-      },
+      { name: "Males", type: "bar", stack: "total", data: chartData.male },
+      { name: "Females", type: "bar", stack: "total", data: chartData.female },
     ],
-  };
-
-  const handleFilterChange = (updatedFilters) => {
-    setSelectedYear(updatedFilters.year || selectedYear);
-    setSelectedUnit(updatedFilters.unit || selectedUnit);
-    setSelectedCountries(updatedFilters.countries || selectedCountries);
-  };
-
-  const interactiveData = {
-    year: {
-      default: selectedYear,
-      values: years,
-      labels: years,
-      multiple: true, // Multiple years selectable
-    },
-    unit: {
-      default: selectedUnit,
-      values: ["Number", "Per100k"],
-      labels: ["Number", "Per100k"],
-      multiple: false, // Only one unit selectable
-    },
-    countries: {
-      default: selectedCountries,
-      values: countriesList,
-      labels: countriesList,
-      multiple: false, // Only one country selectable
-    },
   };
 
   return (
     <div>
-      <h2>Verurteilte Personen (Gestapelt nach Geschlecht)</h2>
+      <ChartHeader title="Gender Distribution Among Suspected, Prosecuted, and Convicted Persons Over Time" />
 
-      <InteractiveFilter
-        interactiveData={interactiveData}
-        onFilterChange={handleFilterChange}
-      />
-      {error && (
-        <div className="text-red-500 mt-4">
-          <ErrorAlert message={error}></ErrorAlert>
-        </div>
+      <ExplanationSection title="How to Read This Chart">
+        <p className="mb-2">
+          This stacked bar chart shows the number of individuals involved in
+          crime cases broken down by gender—for a chosen legal status
+          (Suspected, Prosecuted, or Convicted) across time.
+        </p>
+        <ul className="list-disc list-inside space-y-1 mb-2">
+          <li>
+            <strong>X‑Axis (Year):</strong> Each bar represents a calendar year.
+          </li>
+          <li>
+            <strong>Y‑Axis (Count of Persons):</strong> Total number of people
+            recorded for the selected legal status in that year.
+          </li>
+          <li>
+            <strong>Stacked Bars:</strong> Each bar is split into two segments—
+            <em>Males</em> and <em>Females</em>—showing each gender’s
+            contribution to the total count.
+          </li>
+        </ul>
+        <p className="mb-2">
+          By stacking gender counts, you can quickly compare overall trends over
+          time as well as shifts in gender distribution within each legal status
+          category.
+        </p>
+        <p className="text-red-700">
+          Selecting multiple countries will aggregate the data for all selected
+          countries.
+        </p>
+      </ExplanationSection>
+
+      {interactiveData && (
+        <InteractiveFilter
+          interactiveData={interactiveData}
+          onFilterChange={handleFilterChange}
+        />
       )}
-      <ReactECharts option={option} style={{ width: "100%", height: 600 }} />
+
+      {error && <ErrorAlert message={error} />}
+
+      <div style={{ overflowX: "auto" }}>
+        <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
+      </div>
     </div>
   );
 };
