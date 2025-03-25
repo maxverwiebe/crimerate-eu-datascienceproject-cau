@@ -1,142 +1,96 @@
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
-
-const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
+import ChartHeader from "../chartHeader";
+import ExplanationSection from "../explanationSection";
 import ErrorAlert from "../errorAlert";
 
-/**
- * Transformiert die Rohdaten in das Format für ein Sankey-Diagramm.
- * Hier wird angenommen, dass jedes Datenelement die Felder `geo`, `leg_stat`, `sex` und `value` besitzt.
- */
-const buildSankeyData = (data) => {
-  const filtered = data.filter((d) => d.sex !== "Total");
-
-  // 1) Sammle alle Knotennamen
-  const nodeSet = new Set(["Convicted person"]);
-  filtered.forEach(({ geo, leg_stat, sex }) => {
-    nodeSet.add(geo);
-    nodeSet.add(leg_stat);
-    nodeSet.add(sex);
-  });
-  const nodes = Array.from(nodeSet).map((name) => ({ name }));
-  const indexOf = (name) => nodes.findIndex((n) => n.name === name);
-
-  // 2) Hilfsfunktion zum Aggregieren
-  const accumulate = (map, src, tgt, val) => {
-    const key = `${src}→${tgt}`;
-    map[key] = (map[key] || 0) + val;
-  };
-
-  const geoLeg = {},
-    legConv = {},
-    convSex = {},
-    legSex = {};
-
-  filtered.forEach(({ geo, leg_stat, sex, value }) => {
-    accumulate(geoLeg, geo, leg_stat, value);
-
-    if (leg_stat === "Suspected_person") {
-      accumulate(legConv, "Suspected_person", "Convicted person", value);
-      accumulate(convSex, "Convicted person", sex, value);
-    } else {
-      accumulate(legSex, leg_stat, sex, value);
-    }
-  });
-
-  const makeLinks = (map) =>
-    Object.entries(map).map(([k, v]) => {
-      const [src, tgt] = k.split("→");
-      return { source: indexOf(src), target: indexOf(tgt), value: v };
-    });
-
-  return {
-    nodes,
-    links: [
-      ...makeLinks(geoLeg),
-      ...makeLinks(legConv),
-      ...makeLinks(convSex),
-      ...makeLinks(legSex),
-    ],
-  };
-};
+const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question3Chart4 = () => {
-  const [data, setData] = useState([]);
+  const [chartData, setChartData] = useState(null);
+  const [filterCriteria, setFilterCriteria] = useState({});
   const [interactiveData, setInteractiveData] = useState(null);
-  const [filters, setFilters] = useState({});
   const [error, setError] = useState(null);
+
   useEffect(() => {
+    let url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question3/chart2`;
     const params = new URLSearchParams();
-    filters.geo?.forEach((g) => params.append("geo", g));
-    filters.time?.forEach((t) => params.append("time", t));
-    if (filters.unit) params.append("unit", filters.unit);
 
-    // Verwende hier den API-Endpunkt für Chart4
-    fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_API
-      }/api/question3/chart2?${params.toString()}`
-    )
+    if (filterCriteria.geo)
+      filterCriteria.geo.forEach((g) => params.append("geo", g));
+    if (filterCriteria.time) params.append("time", filterCriteria.time[0]);
+
+    if ([...params].length) url += `?${params.toString()}`;
+
+    fetch(url)
       .then((res) => res.json())
-      .then(({ chart_data, interactive_data, error }) => {
-        setInteractiveData(interactive_data);
-        setData(chart_data);
-        setError(error);
+      .then((json) => {
+        if (json.interactive_data) setInteractiveData(json.interactive_data);
+        if (json.chart_data) setChartData(json.chart_data);
+        if (json.error) setError(json.error);
       })
-      .catch(console.error);
-  }, [filters]);
+      .catch((e) => setError(e.message));
+  }, [filterCriteria]);
 
-  // Zeige eine Ladeanzeige, wenn noch keine Daten vorhanden sind
-  if (!data || data.length === 0) {
-    return <div>Lade Daten...</div>;
-  }
-
-  // Transformiere die Daten in das Sankey-Format
-  const sankeyData = buildSankeyData(data);
-
-  const option = {
-    tooltip: {
-      trigger: "item",
-      formatter: (params) => {
-        if (params.dataType === "edge") {
-          return `${params.data.source} → ${params.data.target}: ${params.data.value}`;
-        }
-        return `${params.data.name}`;
-      },
-    },
-    series: [
-      {
-        type: "sankey",
-        layout: "none",
-        data: sankeyData.nodes,
-        links: sankeyData.links,
-        emphasis: {
-          focus: "adjacency",
-        },
-        lineStyle: {
-          color: "source",
-          curveness: 0.5,
-        },
-      },
-    ],
+  const handleFilterChange = (newFilters) => {
+    setFilterCriteria(newFilters);
   };
 
+  const option = chartData
+    ? {
+        title: {
+          text: `Criminal Justice Flow (${chartData.year})`,
+          left: "center",
+        },
+        tooltip: { trigger: "item", formatter: "{b}: {c}" },
+        series: [
+          {
+            type: "sankey",
+            layout: "none",
+            emphasis: { focus: "adjacency" },
+            data: chartData.nodes,
+            links: chartData.links,
+            label: { fontSize: 12 },
+            lineStyle: { curveness: 0.5 },
+          },
+        ],
+      }
+    : {};
+
   return (
-    <div className="p-4">
-      <h3 className="text-xl">
-        Sankey diagram: Links between countries, legal status and gender
-      </h3>
-      <InteractiveFilter
-        interactiveData={interactiveData}
-        onFilterChange={setFilters}
-      />
+    <div>
+      <ChartHeader title="Criminal Justice Flow by Legal Status & Gender" />
+
+      <ExplanationSection title="How to Read This Chart">
+        <p>
+          Dieses Sankey‑Diagramm zeigt den Fluss von Verdächtigen zu
+          Verurteilten bzw. nicht-Verurteilten Personen, aufgeschlüsselt nach
+          Geschlecht. Die Breite jeder Linie entspricht der Anzahl der Personen.
+        </p>
+      </ExplanationSection>
+
+      {interactiveData && (
+        <InteractiveFilter
+          interactiveData={interactiveData}
+          onFilterChange={handleFilterChange}
+        />
+      )}
+
       {error && (
-        <div className="text-red-500 mt-4">
-          <ErrorAlert message={error}></ErrorAlert>
+        <div className="mt-4">
+          <ErrorAlert message={error} />
         </div>
       )}
-      <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
+
+      <div style={{ overflowX: "auto", marginTop: "1rem" }}>
+        {chartData && (
+          <ReactECharts
+            option={option}
+            style={{ width: "100%", height: 600 }}
+          />
+        )}
+      </div>
     </div>
   );
 };
