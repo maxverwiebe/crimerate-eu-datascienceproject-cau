@@ -104,3 +104,56 @@ def chart3():
         resp.set_error(f"Failed to build chart data: {e}")
 
     return resp.to_json()
+
+
+@question1_bp.route('/chart4', methods=['GET'])
+def chart4():
+    loader = EurostatDataLoader(cache_expiry=1800)
+
+    df_pop   = loader.load_dataset('tps00001')
+    df_crime = loader.load_dataset('crim_off_cat')
+
+    time_param = request.args.get('time', default="2015")
+
+    geo_labels = loader.get_dimensions('crim_off_cat')['geo']['labels']
+    dims = loader.get_dimensions('crim_off_cat')
+
+    df_pop = (
+        df_pop
+        .dropna(subset=['value'])
+        .rename(columns={'time': 'year', 'value': 'population'})
+        .assign(year=lambda d: d['year'].astype(int))
+    )
+    latest_year = int(time_param)
+    df_pop = df_pop[df_pop['year'] == latest_year][['geo_code', 'population']]
+
+    df_crime = (
+        df_crime
+        .dropna(subset=['value'])
+        .rename(columns={'time': 'year', 'value': 'crime_count'})
+        .assign(year=lambda d: d['year'].astype(int))
+        .groupby(['geo_code', 'year'], as_index=False)['crime_count'].sum()
+    )
+    df_crime = df_crime[df_crime['year'] == latest_year][['geo_code', 'crime_count']]
+
+    df = df_crime.merge(df_pop, on='geo_code')
+    df['crime_rate_per_100k'] = (df['crime_count'] / df['population']) * 100000
+
+    chart_data = (
+        df
+        .sort_values('crime_rate_per_100k', ascending=False)
+        .rename(columns={'geo_code': 'geo'})
+        [['geo', 'crime_rate_per_100k']]
+        .to_dict(orient='records')
+    )
+
+    response = ChartResponse(
+        chart_data=chart_data,
+        interactive_data={"time": {
+            "values": ["2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021", "2022"],
+            "multiple": False,
+            "default": "2015"
+        }}
+    )
+
+    return response.to_json()
