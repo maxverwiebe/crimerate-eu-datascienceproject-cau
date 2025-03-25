@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import dynamic from "next/dynamic";
 import InteractiveFilter from "@/components/interactiveFilter";
 import ErrorAlert from "../errorAlert";
+import ChartLoading from "../chartLoading";
+import ChartHeader from "../chartHeader";
+import ExplanationSection from "../explanationSection";
+
+const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const COLORS = [
   "#8884d8",
@@ -26,38 +23,33 @@ export default function Question7Chart1Mini() {
   const [interactiveData, setInteractiveData] = useState(null);
   const [filterCriteria, setFilterCriteria] = useState({});
   const [error, setError] = useState(null);
+  const [yAxisMax, setYAxisMax] = useState(50);
 
   useEffect(() => {
     async function fetchData() {
       setError(null);
       const params = new URLSearchParams();
-      Object.entries(filterCriteria).forEach(([key, values]) =>
-        values.forEach((v) => params.append(key, v))
+      Object.entries(filterCriteria).forEach(([k, vs]) =>
+        vs.forEach((v) => params.append(k, v))
       );
-      const url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question7/chart1${
-        params.toString() ? `?${params}` : ""
-      }`;
+      if (!params.has("geo")) params.append("geo", "DE");
 
       try {
-        const res = await fetch(url);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question7/chart1?${params}`
+        );
         const json = await res.json();
-
-        if (json.error) {
-          throw new Error(json.error);
-        }
-
+        if (json.error) throw new Error(json.error);
         setNestedData(json.chart_data || {});
         setInteractiveData(json.interactive_data);
-        setError(json.error);
       } catch (err) {
-        setError(err.message || "Unknown error fetching data");
+        setError(err.message);
       }
     }
-
     fetchData();
   }, [filterCriteria]);
 
-  const handleFilterChange = (criteria) => setFilterCriteria(criteria);
+  const handleFilterChange = setFilterCriteria;
 
   const getMiniChartData = (data) => {
     const result = {};
@@ -78,29 +70,48 @@ export default function Question7Chart1Mini() {
     );
   };
 
-  const combinedCountries = (miniData) =>
-    Array.from(
-      new Set(
-        Object.values(miniData)
-          .flatMap((arr) => arr.flatMap(Object.keys))
-          .filter((key) => key !== "time")
-      )
-    );
-
-  if (!nestedData || Object.keys(nestedData).length === 0) {
-    return <div>Lade Daten…</div>;
-  }
+  if (!nestedData || !Object.keys(nestedData).length) return <ChartLoading />;
 
   const miniChartData = getMiniChartData(nestedData);
   const ageGroups = Object.keys(miniChartData).sort();
-  const countries = combinedCountries(miniChartData);
+  const countries = Array.from(
+    new Set(
+      ageGroups.flatMap((age) =>
+        Object.keys(miniChartData[age][0]).filter((k) => k !== "time")
+      )
+    )
+  );
 
   return (
-    <div className="p-5">
-      <h2 className="text-2xl font-bold mb-4">
-        Question 7 Chart 1 (Mini-Charts)
-      </h2>
-      <p className="mb-4">Trends der Anteile je Altersgruppe über die Zeit.</p>
+    <div>
+      <ChartHeader title="Age‑Group Percentage Trends Over Time" />
+
+      <ExplanationSection title="How to Read These Mini‑Charts">
+        <p className="mb-2">
+          Each small chart represents one age group and shows how its share
+          (percentage) of the selected measure has evolved over time for each
+          country.
+        </p>
+        <ul className="list-disc list-inside space-y-1 mb-2">
+          <li>
+            <strong>X‑Axis (Year):</strong> Calendar years in the dataset.
+          </li>
+          <li>
+            <strong>Y‑Axis (Percentage):</strong> Proportion of the total
+            population (or selected measure) accounted for by that age group in
+            a given year.
+          </li>
+          <li>
+            <strong>Lines:</strong> Each colored line corresponds to a different
+            country (legend shown below). Follow a line to see how the share of
+            that age group rises or falls over time.
+          </li>
+        </ul>
+        <p className="mb-2">
+          Use the "Y-Axis Max" slider to adjust the y‑axis maximum — this can
+          help when comparing age groups whose percentage values vary greatly.
+        </p>
+      </ExplanationSection>
 
       {interactiveData && (
         <InteractiveFilter
@@ -108,6 +119,17 @@ export default function Question7Chart1Mini() {
           onFilterChange={handleFilterChange}
         />
       )}
+      <div className="mb-4 mt-4">
+        <label className="mr-2">Y-Axis Max:</label>
+        <input
+          type="range"
+          min="10"
+          max="100"
+          value={yAxisMax}
+          onChange={(e) => setYAxisMax(Number(e.target.value))}
+        />
+        <span className="ml-2">{yAxisMax}</span>
+      </div>
 
       {error && <ErrorAlert message={error} onClose={() => setError(null)} />}
 
@@ -124,28 +146,37 @@ export default function Question7Chart1Mini() {
       </div>
 
       <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-        {ageGroups.map((age) => (
-          <div key={age} className="border p-4 rounded shadow-sm">
-            <h3 className="text-xl mb-2">{age}</h3>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={miniChartData[age]}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="time" />
-                <YAxis domain={[0, 50]} />
-                <Tooltip />
-                {countries.map((country, i) => (
-                  <Line
-                    key={country}
-                    dataKey={country}
-                    stroke={COLORS[i % COLORS.length]}
-                    strokeWidth={2}
-                    dot={{ r: 1 }}
-                  />
-                ))}
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
-        ))}
+        {ageGroups.map((age) => {
+          const option = {
+            tooltip: { trigger: "axis" },
+            xAxis: {
+              type: "category",
+              data: miniChartData[age].map((d) => d.time),
+            },
+            yAxis: { type: "value", min: 0, max: yAxisMax },
+            grid: { left: "10%", right: "10%", bottom: "15%", top: "10%" },
+            series: countries.map((country, idx) => ({
+              name: country,
+              type: "line",
+              data: miniChartData[age].map((d) => d[country] ?? 0),
+              smooth: true,
+              lineStyle: { width: 2 },
+              symbolSize: 4,
+              emphasis: { focus: "series" },
+              color: COLORS[idx % COLORS.length],
+            })),
+          };
+
+          return (
+            <div key={age} className="border p-4 rounded shadow-sm">
+              <h3 className="text-xl mb-2">{age}</h3>
+              <ReactECharts
+                option={option}
+                style={{ height: 200, width: "100%" }}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );

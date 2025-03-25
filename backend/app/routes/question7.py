@@ -95,7 +95,7 @@ def chart1():
             "values": filter_geo,
             "labels": dims['geo']['labels'] if 'geo' in dims else [],
             "multiple": True,
-            "default": None
+            "default": "DE"
         }
     }
 
