@@ -112,9 +112,9 @@ def chart2():
     
     filters = {}
     if countries_param:
-        filters['geo'] = countries_param
+        filters['geo'] = countries_param or ['DE']
     if time_params:
-        filters['time'] = time_params
+        filters['time'] = time_params or ['2015']
 
     df = loader.load_dataset('hlth_dhc130', filters=filters)
     df = preprocess_q7(df)
@@ -144,12 +144,12 @@ def chart2():
             "values": filter_geo,
             "labels": dims['geo']['labels'] if 'geo' in dims else [],
             "multiple": False,
-            "default": None
+            "default": "DE"
         },
         "time": {
             "values": filter_time,
             "multiple": False,
-            "default": None
+            "default": "2015"
         }
     }
     
