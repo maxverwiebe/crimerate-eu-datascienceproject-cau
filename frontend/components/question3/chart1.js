@@ -4,7 +4,8 @@ import InteractiveFilter from "../interactiveFilter";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 import ErrorAlert from "../errorAlert";
-
+import ChartHeader from "../chartHeader";
+import ExplanationSection from "../explanationSection";
 const Question3Chart1 = () => {
   const [data, setData] = useState([]);
   const [interactiveData, setInteractiveData] = useState(null);
@@ -14,6 +15,7 @@ const Question3Chart1 = () => {
     const params = new URLSearchParams();
     filters.geo?.forEach((g) => params.append("geo", g));
     filters.time?.forEach((t) => params.append("time", t));
+    filters.legal_status?.forEach((l) => params.append("legal_status", l));
     if (filters.unit) params.append("unit", filters.unit);
 
     fetch(
@@ -30,7 +32,6 @@ const Question3Chart1 = () => {
       .catch(console.error);
   }, [filters]);
 
-  // Wenn keine Daten vorhanden, zeige "Lade Daten..."
   if (!data || data.length === 0) {
     return <div>Lade Daten...</div>;
   }
@@ -49,7 +50,6 @@ const Question3Chart1 = () => {
   ).map(({ geo, time, value, count }) => ({
     geo,
     time,
-    // Hier wird der Durchschnittswert verwendet – alternativ könnte man auch summieren
     value: value / count,
   }));
 
@@ -107,11 +107,29 @@ const Question3Chart1 = () => {
   };
 
   return (
-    <div className="p-4">
-      <h3 className="text-xl">
-        Absolut number of people involved in bribery and corruption across
-        European countries
-      </h3>
+    <div>
+      <ChartHeader title="Bribery & Corruption Cases" />
+
+      <ExplanationSection title="Chart Explanation">
+        <p className="mb-2">
+          This heatmap displays the number of recorded bribery and corruption
+          incidents per country (X‑axis) across different years (Y‑axis). Darker
+          cells represent higher incidents.
+        </p>
+        <ul className="list-disc list-inside space-y-1 mb-2">
+          <li>
+            <strong>X‑Axis (Country):</strong> Countries sorted alphabetically.
+          </li>
+          <li>
+            <strong>Y‑Axis (Year):</strong> Chronological order (latest at top).
+          </li>
+          <li>
+            <strong>Color Scale:</strong> Indicates average incident count;
+            darker = more incidents.
+          </li>
+        </ul>
+      </ExplanationSection>
+
       <InteractiveFilter
         interactiveData={interactiveData}
         onFilterChange={setFilters}

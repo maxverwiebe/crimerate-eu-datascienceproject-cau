@@ -3,7 +3,9 @@ import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
 import ErrorAlert from "../errorAlert";
 import { getCountryCode } from "@dkkoval/react-eu-stats-map";
-
+import { ResponsiveContainer } from "recharts";
+import ChartHeader from "../chartHeader";
+import ExplanationSection from "../explanationSection";
 const EUMap = dynamic(
   () => import("@dkkoval/react-eu-stats-map").then((mod) => mod.default),
   { ssr: false }
@@ -19,6 +21,7 @@ const Question3Chart5 = () => {
     const params = new URLSearchParams();
     filters.geo?.forEach((g) => params.append("geo", g));
     filters.time?.forEach((t) => params.append("time", t));
+    filters.legal_status?.forEach((l) => params.append("legal_status", l));
 
     fetch(
       `${
@@ -58,7 +61,31 @@ const Question3Chart5 = () => {
 
   return (
     <div>
-      <h3 className="text-xl">{title}</h3>
+      <ChartHeader title="Bribery & Corruption Across Europe" />
+
+      <ExplanationSection title="Chart Explanation">
+        <p className="mb-2">
+          This choropleth map visualizes the number of recorded bribery and
+          corruption incidents per country for the selected year(s). Darker
+          countries indicate higher average incident counts.
+        </p>
+        <ul className="list-disc list-inside space-y-1 mb-2">
+          <li>
+            <strong>Country:</strong> Each EU member state is shaded according
+            to its average incident count.
+          </li>
+          <li>
+            <strong>Color Scale:</strong> Darker shades represent higher average
+            numbers of incidents.
+          </li>
+        </ul>
+        <p>
+          Use the filters above to adjust the time period or legal status. This
+          map helps identify geographic hotspots of bribery and corruption
+          across Europe.
+        </p>
+      </ExplanationSection>
+
       <InteractiveFilter
         interactiveData={interactiveData}
         onFilterChange={setFilters}
@@ -68,13 +95,16 @@ const Question3Chart5 = () => {
           <ErrorAlert message={error} />
         </div>
       )}
-      <EUMap
-        width={1000}
-        height={600}
-        title={""}
-        valueName={valueName}
-        data={mapData}
-      />
+      <div className="mt-4">
+        <EUMap
+          width={1000}
+          height={600}
+          title={""}
+          valueName={valueName}
+          data={mapData}
+          to
+        />
+      </div>
     </div>
   );
 };

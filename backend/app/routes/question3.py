@@ -4,6 +4,7 @@ import pandas as pd
 from .chart_response import ChartResponse
 
 question3_bp = Blueprint('question3', __name__)
+
 @question3_bp.route('/chart1', methods=['GET'])
 def chart1():
     loader = EurostatDataLoader()
@@ -11,21 +12,51 @@ def chart1():
 
     dims = loader.get_dimensions('crim_just_bri')
     interactive_data = {
-        "time": {"values": dims['time']['codes'], "multiple": True, "default": None},
-        "geo": {"values": dims.get('geo', {}).get('codes', []), "labels": dims.get('geo', {}).get('labels', []), "multiple": True, "default": None},
-        "unit": {"values": ["Number", "Per hundred thousand inhabitants"], "multiple": False, "default": "Number"}
+        "time": {
+            "values": dims['time']['codes'],
+            "multiple": True,
+            "default": None
+        },
+        "geo": {
+            "values": dims.get('geo', {}).get('codes', []),
+            "labels": dims.get('geo', {}).get('labels', []),
+            "multiple": True,
+            "default": None
+        },
+        "unit": {
+            "values": ["Number", "Per hundred thousand inhabitants"],
+            "multiple": False,
+            "default": "Number"
+        }
     }
+
+    legal_dim = dims.get('leg_stat')
+    if legal_dim:
+        interactive_data["legal_status"] = {
+            "values": legal_dim.get('codes', []),
+            "labels": legal_dim.get('labels', []),
+            "multiple": False,
+            "default": "PER_SUSP"
+        }
+
     resp.set_interactive_data(interactive_data)
 
     try:
         time_params = [int(t) for t in request.args.getlist('time')]
         geo_params = request.args.getlist('geo')
         unit = request.args.get('unit', "Number")
+        legal_params = request.args.get('legal_status', "PER_SUSP")
 
         filters = {}
-        if time_params: filters['time'] = time_params
-        if geo_params: filters['geo'] = geo_params
-        if not filters: filters = None
+        if time_params:
+            filters['time'] = time_params
+        if geo_params:
+            filters['geo'] = geo_params
+        if legal_params:
+            filters['leg_stat'] = legal_params or "PER_SUSP"
+
+        if not filters:
+            filters = None
 
         df = loader.load_dataset('crim_just_bri', filters=filters)
         df = df[(df["sex"] == "Total") & (df["unit"] == unit)].dropna(subset=["value"])
@@ -76,20 +107,45 @@ def chart5():
 
     dims = loader.get_dimensions('crim_just_bri')
     interactive_data = {
-        "time": {"values": dims['time']['codes'], "multiple": False, "default": None},
-        "unit": {"values": ["Number", "Per hundred thousand inhabitants"], "multiple": False, "default": "Number"}
+        "time": {
+            "values": dims['time']['codes'],
+            "multiple": False,
+            "default": None
+        },
+        "unit": {
+            "values": ["Number", "Per hundred thousand inhabitants"],
+            "multiple": False,
+            "default": "Number"
+        }
     }
+
+    legal_dim = dims.get('leg_stat')
+    if legal_dim:
+        interactive_data["legal_status"] = {
+            "values": legal_dim.get('codes', []),
+            "labels": legal_dim.get('labels', []),
+            "multiple": False,
+            "default": "PER_SUSP"
+        }
+
     resp.set_interactive_data(interactive_data)
 
     try:
         time_params = [int(t) for t in request.args.getlist('time')]
         geo_params = request.args.getlist('geo')
         unit = request.args.get('unit', "Number")
+        legal_params = request.args.get('legal_status') or "PER_SUSP"
 
         filters = {}
-        if time_params: filters['time'] = time_params
-        if geo_params: filters['geo'] = geo_params
-        if not filters: filters = None
+        if time_params:
+            filters['time'] = time_params
+        if geo_params:
+            filters['geo'] = geo_params
+        if legal_params:
+            filters['leg_stat'] = legal_params
+
+        if not filters:
+            filters = None
 
         df = loader.load_dataset('crim_just_bri', filters=filters)
         df = df[(df["sex"] == "Total") & (df["unit"] == unit)].dropna(subset=["value"])

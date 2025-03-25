@@ -10,45 +10,55 @@ import ErrorAlert from "../errorAlert";
  * Hier wird angenommen, dass jedes Datenelement die Felder `geo`, `leg_stat`, `sex` und `value` besitzt.
  */
 const buildSankeyData = (data) => {
-  // Filtere Gesamtwerte (z.B. "Total") aus, um Doppeldeutigkeiten zu vermeiden
-  const filteredData = data.filter((item) => item.sex !== "Total");
+  const filtered = data.filter((d) => d.sex !== "Total");
 
-  // Aggregiere Werte von geo zu leg_stat und von leg_stat zu sex
-  const geoLegMap = {};
-  const legSexMap = {};
-  const nodesSet = new Set();
+  // 1) Sammle alle Knotennamen
+  const nodeSet = new Set(["Convicted person"]);
+  filtered.forEach(({ geo, leg_stat, sex }) => {
+    nodeSet.add(geo);
+    nodeSet.add(leg_stat);
+    nodeSet.add(sex);
+  });
+  const nodes = Array.from(nodeSet).map((name) => ({ name }));
+  const indexOf = (name) => nodes.findIndex((n) => n.name === name);
 
-  filteredData.forEach(({ geo, leg_stat, sex, value }) => {
-    // Stelle sicher, dass alle Knoten registriert werden
-    nodesSet.add(geo);
-    nodesSet.add(leg_stat);
-    nodesSet.add(sex);
+  // 2) Hilfsfunktion zum Aggregieren
+  const accumulate = (map, src, tgt, val) => {
+    const key = `${src}→${tgt}`;
+    map[key] = (map[key] || 0) + val;
+  };
 
-    // Aggregation für geo -> leg_stat
-    const geoLegKey = `${geo} -> ${leg_stat}`;
-    geoLegMap[geoLegKey] = (geoLegMap[geoLegKey] || 0) + value;
+  const geoLeg = {},
+    legConv = {},
+    convSex = {},
+    legSex = {};
 
-    // Aggregation für leg_stat -> sex
-    const legSexKey = `${leg_stat} -> ${sex}`;
-    legSexMap[legSexKey] = (legSexMap[legSexKey] || 0) + value;
+  filtered.forEach(({ geo, leg_stat, sex, value }) => {
+    accumulate(geoLeg, geo, leg_stat, value);
+
+    if (leg_stat === "Suspected_person") {
+      accumulate(legConv, "Suspected_person", "Convicted person", value);
+      accumulate(convSex, "Convicted person", sex, value);
+    } else {
+      accumulate(legSex, leg_stat, sex, value);
+    }
   });
 
-  // Erstelle Knoten-Array
-  const nodes = Array.from(nodesSet).map((name) => ({ name }));
+  const makeLinks = (map) =>
+    Object.entries(map).map(([k, v]) => {
+      const [src, tgt] = k.split("→");
+      return { source: indexOf(src), target: indexOf(tgt), value: v };
+    });
 
-  // Erstelle Links aus den aggregierten Werten
-  const links = [
-    ...Object.entries(geoLegMap).map(([key, value]) => {
-      const [source, target] = key.split(" -> ");
-      return { source, target, value };
-    }),
-    ...Object.entries(legSexMap).map(([key, value]) => {
-      const [source, target] = key.split(" -> ");
-      return { source, target, value };
-    }),
-  ];
-
-  return { nodes, links };
+  return {
+    nodes,
+    links: [
+      ...makeLinks(geoLeg),
+      ...makeLinks(legConv),
+      ...makeLinks(convSex),
+      ...makeLinks(legSex),
+    ],
+  };
 };
 
 const Question3Chart4 = () => {
