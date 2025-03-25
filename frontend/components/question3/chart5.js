@@ -3,9 +3,9 @@ import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
 import ErrorAlert from "../errorAlert";
 import { getCountryCode } from "@dkkoval/react-eu-stats-map";
-import { ResponsiveContainer } from "recharts";
 import ChartHeader from "../chartHeader";
 import ExplanationSection from "../explanationSection";
+import ChartLoading from "../chartLoading";
 const EUMap = dynamic(
   () => import("@dkkoval/react-eu-stats-map").then((mod) => mod.default),
   { ssr: false }
@@ -16,6 +16,7 @@ const Question3Chart5 = () => {
   const [interactiveData, setInteractiveData] = useState(null);
   const [filters, setFilters] = useState({});
   const [error, setError] = useState(null);
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -37,7 +38,21 @@ const Question3Chart5 = () => {
       .catch((err) => setError(err.message));
   }, [filters]);
 
-  if (!data.length) return <div>Lade Daten...</div>;
+  useEffect(() => {
+    const updateSize = () => {
+      const width = Math.min(window.innerWidth * 0.95, 1000);
+      setDimensions({
+        width,
+        height: Math.round(width * 0.6),
+      });
+    };
+
+    window.addEventListener("resize", updateSize);
+    updateSize();
+    return () => window.removeEventListener("resize", updateSize);
+  }, []);
+
+  if (!data.length) return <ChartLoading />;
 
   const aggregated = Object.values(
     data.reduce((acc, { geo, value }) => {
@@ -97,8 +112,8 @@ const Question3Chart5 = () => {
       )}
       <div className="mt-4">
         <EUMap
-          width={1000}
-          height={600}
+          width={dimensions.width}
+          height={dimensions.height}
           title={""}
           valueName={valueName}
           data={mapData}

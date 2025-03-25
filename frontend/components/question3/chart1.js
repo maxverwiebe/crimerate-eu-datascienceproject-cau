@@ -6,6 +6,8 @@ const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 import ErrorAlert from "../errorAlert";
 import ChartHeader from "../chartHeader";
 import ExplanationSection from "../explanationSection";
+import ChartLoading from "../chartLoading";
+
 const Question3Chart1 = () => {
   const [data, setData] = useState([]);
   const [interactiveData, setInteractiveData] = useState(null);
@@ -33,10 +35,9 @@ const Question3Chart1 = () => {
   }, [filters]);
 
   if (!data || data.length === 0) {
-    return <div>Lade Daten...</div>;
+    return <ChartLoading />;
   }
 
-  // Aggregiere doppelte Einträge basierend auf geo und time
   const aggregatedData = Object.values(
     data.reduce((acc, { geo, time, value }) => {
       const key = `${geo}-${time}`;

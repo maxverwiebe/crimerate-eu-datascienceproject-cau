@@ -10,8 +10,6 @@ import {
 } from "recharts";
 
 import Question3Chart1 from "@/components/question3/chart1";
-import Question3Chart2 from "@/components/question3/chart2";
-import Question3Chart3 from "@/components/question3/chart3";
 import Question3Chart4 from "@/components/question3/chart4";
 import Question3Chart5 from "@/components/question3/chart5";
 import SectionHeader from "@/components/sectionHeader";

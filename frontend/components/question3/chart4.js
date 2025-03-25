@@ -4,6 +4,7 @@ import InteractiveFilter from "../interactiveFilter";
 import ChartHeader from "../chartHeader";
 import ExplanationSection from "../explanationSection";
 import ErrorAlert from "../errorAlert";
+import ChartLoading from "../chartLoading";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -58,15 +59,17 @@ const Question3Chart4 = () => {
       }
     : {};
 
+  if (!chartData) return <ChartLoading />;
+
   return (
     <div>
       <ChartHeader title="Criminal Justice Flow by Legal Status & Gender" />
 
       <ExplanationSection title="How to Read This Chart">
         <p>
-          Dieses Sankey‑Diagramm zeigt den Fluss von Verdächtigen zu
-          Verurteilten bzw. nicht-Verurteilten Personen, aufgeschlüsselt nach
-          Geschlecht. Die Breite jeder Linie entspricht der Anzahl der Personen.
+          This Sankey diagram shows the flow from suspects to convicted and
+          non-convicted persons, broken down by gender. gender. The width of
+          each line corresponds to the number of people.
         </p>
       </ExplanationSection>
 
