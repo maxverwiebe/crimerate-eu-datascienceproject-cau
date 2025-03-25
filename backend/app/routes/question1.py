@@ -18,7 +18,7 @@ def chart1():
             "default": None
         },
         "geo": {
-            "values": dims.get('geo', {}).get('codes', []),
+            "values": dims.get('geo', {}).get('labels', []),
             "multiple": True,
             "default": None
         }
@@ -63,6 +63,7 @@ def chart3():
     dims = loader.get_dimensions('crim_off_cat')
     interactive_data = {
         "geo": {
+            "labels": dims.get('geo', {}).get('labels', []),
             "values": dims.get('geo', {}).get('codes', []),
             "multiple": True,
             "default": None
