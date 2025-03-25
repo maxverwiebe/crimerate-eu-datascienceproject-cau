@@ -42,7 +42,7 @@ const Question1Chart4 = () => {
       const width = Math.min(window.innerWidth * 0.95, 1000);
       setDimensions({
         width,
-        height: Math.round(width * 0.6), // 16:9 ≈ 0.56; hier etwas mehr Höhe
+        height: Math.round(width * 0.6),
       });
     };
 
