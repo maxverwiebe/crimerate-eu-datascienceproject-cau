@@ -67,3 +67,36 @@ def chart2():
         resp.set_error(f"Failed to build chart data: {e}")
 
     return resp.to_json()
+
+
+@question3_bp.route('/chart5', methods=['GET'])
+def chart5():
+    loader = EurostatDataLoader()
+    resp = ChartResponse(chart_data=None)
+
+    dims = loader.get_dimensions('crim_just_bri')
+    interactive_data = {
+        "time": {"values": dims['time']['codes'], "multiple": False, "default": None},
+        "unit": {"values": ["Number", "Per hundred thousand inhabitants"], "multiple": False, "default": "Number"}
+    }
+    resp.set_interactive_data(interactive_data)
+
+    try:
+        time_params = [int(t) for t in request.args.getlist('time')]
+        geo_params = request.args.getlist('geo')
+        unit = request.args.get('unit', "Number")
+
+        filters = {}
+        if time_params: filters['time'] = time_params
+        if geo_params: filters['geo'] = geo_params
+        if not filters: filters = None
+
+        df = loader.load_dataset('crim_just_bri', filters=filters)
+        df = df[(df["sex"] == "Total") & (df["unit"] == unit)].dropna(subset=["value"])
+
+        resp.set_chart_data(df[["time", "geo", "geo_code", "value"]].to_dict(orient="records"))
+
+    except Exception as e:
+        resp.set_error(f"Failed to build chart data: {e}")
+
+    return resp.to_json()

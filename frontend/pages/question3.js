@@ -13,6 +13,7 @@ import Question3Chart1 from "@/components/question3/chart1";
 import Question3Chart2 from "@/components/question3/chart2";
 import Question3Chart3 from "@/components/question3/chart3";
 import Question3Chart4 from "@/components/question3/chart4";
+import Question3Chart5 from "@/components/question3/chart5";
 
 const Question3 = () => {
   return (
@@ -26,8 +27,7 @@ const Question3 = () => {
         corruption across European countries?
       </h3>
       <Question3Chart1 />
-      <Question3Chart2 />
-      <Question3Chart3 />
+      <Question3Chart5 />
       <Question3Chart4 />
     </div>
   );
