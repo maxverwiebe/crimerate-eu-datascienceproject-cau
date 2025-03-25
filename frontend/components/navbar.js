@@ -1,46 +1,47 @@
 import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { pathname } = useRouter();
 
   const links = [
     {
       label:
-        "How do trends in police recorded crimes differ between all EU countries? Whats the most happening crime in the EU?",
+        "1. How do trends in police recorded crimes differ between all EU countries? Whats the most happening crime in the EU?",
       href: "/question1",
     },
     {
       label:
-        "How has the trend of police-recorded crimes evolved in various cities across the EU?",
+        "2. How has the trend of police-recorded crimes evolved in various cities across the EU?",
       href: "/question2",
     },
     {
       label:
-        "How do legal status and gender influence involvement in bribery and corruption across European countries?",
+        "3. How do legal status and gender influence involvement in bribery and corruption across European countries?",
       href: "/question3",
     },
     {
       label:
-        "To what extent is there a correlation between population size, economic growth, and the development of crime rates in European countries?",
+        "4. To what extent is there a correlation between population size, economic growth, and the development of crime rates in European countries?",
       href: "/question4",
     },
     {
       label:
-        "What is the relationship between income levels and crime rates? (urbanisation)",
+        "5. What is the relationship between income levels and crime rates? (urbanisation)",
       href: "/question5",
     },
     {
       label:
-        "How does crime distribution vary by gender across European countries?",
+        "6. How does crime distribution vary by gender across European countries?",
       href: "/question6",
     },
     {
       label:
-        "How does crime distribution vary across different age group in European countries?",
+        "7. How does crime distribution vary across different age group in European countries?",
       href: "/question7",
     },
-    //{ label: "Bla", href: "#" },
-    //{ label: "Bla", href: "#" },
   ];
 
   return (
@@ -51,9 +52,9 @@ export default function Navbar() {
           <span className="text-s">Data Science Project @ CAU</span>
         </div>
         <button
-          className="focus:outline-none"
           onClick={() => setIsOpen((prev) => !prev)}
           aria-label="Toggle menu"
+          className="focus:outline-none"
         >
           <svg
             className="w-6 h-6"
@@ -81,14 +82,14 @@ export default function Navbar() {
       </div>
 
       <aside
-        className={`fixed top-0 left-0 h-full bg-blue-700 p-6 transform transition-transform duration-300 ease-in-out
-                    ${isOpen ? "translate-x-0" : "-translate-x-full"} 
-                    w-full md:w-80 lg:w-96 z-[100] overflow-y-auto`}
+        className={`fixed top-0 left-0 h-full bg-blue-700 p-6 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } w-full md:w-80 lg:w-96 z-[100] overflow-y-auto`}
       >
         <button
-          className="absolute top-4 right-4 focus:outline-none"
           onClick={() => setIsOpen(false)}
           aria-label="Close menu"
+          className="absolute top-4 right-4 focus:outline-none"
         >
           <svg
             className="w-6 h-6"
@@ -108,10 +109,13 @@ export default function Navbar() {
         <nav className="mt-10 flex flex-col space-y-3">
           {links.map(({ label, href }) => (
             <a
-              key={label}
-              href={href}
-              className="text-base leading-relaxed hover:bg-blue-600 rounded px-4 py-2 break-words"
               onClick={() => setIsOpen(false)}
+              className={`
+                  text-base leading-relaxed rounded px-4 py-2 break-words hover:bg-blue-600
+                  ${pathname === href ? "bg-blue-500 font-semibold" : ""}
+                `}
+              key={href}
+              href={href}
             >
               {label}
             </a>
