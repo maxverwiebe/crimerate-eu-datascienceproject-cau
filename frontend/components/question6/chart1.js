@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
 import ErrorAlert from "../errorAlert";
+import ChartHeader from "../chartHeader";
+import ChartLoading from "../chartLoading";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question6Chart1 = () => {
@@ -41,7 +43,7 @@ const Question6Chart1 = () => {
         const stat = yearData[selectedLegStat];
         const maleVal = stat["Males"] ? stat["Males"][selectedUnit] : 0;
         const femaleVal = stat["Females"] ? stat["Females"][selectedUnit] : 0;
-        males.push(-1 * (maleVal || 0)); // Negative für die linke Seite
+        males.push(-1 * (maleVal || 0));
         females.push(femaleVal || 0);
       } else {
         males.push(0);
@@ -54,10 +56,6 @@ const Question6Chart1 = () => {
   const { countries, males, females } = formatData();
 
   const option = {
-    title: {
-      text: `Population Chart - ${selectedLegStat} (${selectedYear})`,
-      left: "center",
-    },
     tooltip: {
       trigger: "axis",
       axisPointer: {
@@ -67,7 +65,6 @@ const Question6Chart1 = () => {
         const male = params.find((p) => p.seriesName === "Males");
         const female = params.find((p) => p.seriesName === "Females");
 
-        // Wenn Männlich oder Weiblich 0 ist, gebe eine Nachricht zurück
         const maleValue =
           male.value === 0 ? "No data available" : Math.abs(male.value);
         const femaleValue =
@@ -116,7 +113,6 @@ const Question6Chart1 = () => {
   };
 
   const handleFilterChange = (updatedFilters) => {
-    // Update the state with the filter selections
     setSelectedYear(updatedFilters.year || selectedYear);
     setSelectedLegStat(updatedFilters.legStat || selectedLegStat);
     setSelectedUnit(updatedFilters.unit || selectedUnit);
@@ -150,9 +146,13 @@ const Question6Chart1 = () => {
     },
   };
 
+  if (!chartData) {
+    return <ChartLoading />;
+  }
+
   return (
     <div>
-      <h2>Question 6 Chart</h2>
+      <ChartHeader title="Gender distribution" />
 
       <InteractiveFilter
         interactiveData={interactiveData}
