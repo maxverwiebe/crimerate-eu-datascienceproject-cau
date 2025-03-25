@@ -141,14 +141,31 @@ const Question1Chart1 = () => {
       <ChartHeader
         title={"Crime categories reported by different countries in EU"}
       />
-      <ExplanationSection title="Explanation">
+      <ExplanationSection title="How to Read This Chart">
+        <h3 className="text-xl font-semibold mb-2">How to Read the Crime Categories Bar Chart</h3>
+        <p className="mb-2">
+          This chart displays the number of crimes reported by different countries in the EU, categorized by crime type.
+          Instead of showing raw values in a table, it uses a stacked bar chart where:
+        </p>
+        <ul className="list-disc list-inside space-y-1 mb-2">
+          <li>
+            <strong>X‑Axis (Country):</strong> Represents different countries in the dataset.
+          </li>
+          <li>
+            <strong>Y‑Axis (Number of Crimes):</strong> The total number of reported crimes for each country.
+          </li>
+          <li>
+            <strong>Stacked Bars:</strong> Each color represents a specific crime category. The height of a stack indicates the total number of reported crimes for that country.
+          </li>
+        </ul>
         <p>
-          This chart shows the number of crimes reported by different countries
-          in the EU. Each country is represented by a stack of bars, where each
-          bar represents a different crime category. The height of each stack
-          represents the total number of crimes reported by that country.
+          This visualization allows you to compare crime levels between countries and identify which crime categories are more prevalent in each nation. For instance, a country with a particularly high total bar suggests a high crime rate across multiple categories.
+        </p>
+        <p>
+          Use the interactive filter to adjust the dataset and explore specific time frames or geographic regions.
         </p>
       </ExplanationSection>
+
       {interactiveData && (
         <InteractiveFilter
           interactiveData={interactiveData}
