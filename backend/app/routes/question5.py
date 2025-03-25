@@ -66,7 +66,7 @@ def chart1():
 
     dims = loader.get_dimensions('crim_off_cat')
     interactive_data = {
-        "geo": {"values": dims['geo']['labels'], "multiple": True, "default": None},
+        "geo": {"labels": dims['geo']['labels'],"values": dims['geo']['codes'], "multiple": True, "default": None},
         "iccs": {"values": dims['iccs']['labels'], "multiple": False, "default": crime_type}
     }
 
