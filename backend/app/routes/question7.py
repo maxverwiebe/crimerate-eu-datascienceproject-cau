@@ -95,7 +95,7 @@ def chart1():
             "values": filter_geo,
             "labels": dims['geo']['labels'] if 'geo' in dims else [],
             "multiple": True,
-            "default": None
+            "default": "DE"
         }
     }
 
@@ -143,12 +143,12 @@ def chart2():
         "geo": {
             "values": filter_geo,
             "labels": dims['geo']['labels'] if 'geo' in dims else [],
-            "multiple": True,
+            "multiple": False,
             "default": None
         },
         "time": {
             "values": filter_time,
-            "multiple": True,
+            "multiple": False,
             "default": None
         }
     }

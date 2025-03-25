@@ -5,6 +5,7 @@ import ExplanationSection from "../explanationSection";
 import SectionHeader from "../sectionHeader";
 import ChartHeader from "../chartHeader";
 import ErrorAlert from "../errorAlert";
+import ChartLoading from "../chartLoading";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const calculateRegression = (data) => {
@@ -59,7 +60,7 @@ const Question5Chart2 = () => {
       .catch(console.error);
   }, [filters]);
 
-  if (!chartData.length) return <div>Lade Daten...</div>;
+  if (!chartData.length) return <ChartLoading />;
 
   const filtered = chartData.filter(
     (d) => !filters.geo.length || filters.geo.includes(d.geo)
@@ -113,20 +114,44 @@ const Question5Chart2 = () => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
 
   return (
-    <div className="p-4">
-      <ChartHeader title="Scatter Chart - Crime Rate vs. Police Officers" />
-      <ExplanationSection title="How to Read the Chart">
-        <ul className="list-disc list-inside space-y-2">
+    <div>
+      <ChartHeader title="Relationship Between Crime and Police Forces" />
+      <ExplanationSection title="How to Read This Chart">
+        <p className="mb-2">
+          This scatter chart compares the crime rate per 100,000 people with the
+          number of police officers per 100,000 people in various countries.
+          Each point represents a country, plotted based on these two metrics.
+        </p>
+        <ul className="list-disc list-inside space-y-1 mb-2">
           <li>
-            Countries in the upper-right have both high crime and high police
-            presence.
+            <strong>Axes:</strong> The x-axis represents the crime rate per
+            100,000 people, while the y-axis represents the number of police
+            officers per 100,000 people.
           </li>
           <li>
-            Countries in the lower-left have low crime and low police presence.
+            <strong>Data Points:</strong> Each point corresponds to a specific
+            country. The location of the point indicates its crime rate and the
+            number of police officers relative to other countries.
           </li>
-          <li>The red line represents the linear regression trend.</li>
+          <li>
+            <strong>Regression Line:</strong> The red line shows the correlation
+            between crime rate and police presence. If the line slopes from
+            top-left to bottom-right, it indicates a negative correlation.
+          </li>
         </ul>
+        <p>
+          The chart allows you to see patterns or outliers. For example,
+          countries in the upper-right quadrant have both high crime rates and
+          high police presence, while those in the lower-left quadrant have
+          lower crime rates and police presence.
+        </p>
+        <p>
+          You can interact with the chart by adjusting filters such as time
+          periods, crime categories, and geographical regions using the filter
+          options provided.
+        </p>
       </ExplanationSection>
+
       {interactiveData && (
         <InteractiveFilter
           interactiveData={interactiveData}

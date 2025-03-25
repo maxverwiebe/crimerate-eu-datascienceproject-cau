@@ -4,8 +4,9 @@ import InteractiveFilter from "../interactiveFilter";
 
 import ExplanationSection from "../explanationSection";
 
-import SectionHeader from "../sectionHeader";
+import ChartHeader from "../chartHeader";
 import ErrorAlert from "../errorAlert";
+import ChartLoading from "../chartLoading";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -34,8 +35,8 @@ const Question4Chart1 = () => {
       .catch(console.error);
   }, [selectedYear, selectedIccs]);
 
-  if (chartData.length === 0) {
-    return <div>Lade Daten...</div>;
+  if (!chartData) {
+    return <ChartLoading />;
   }
 
   const scatterData = chartData.map((d) => ({
@@ -92,21 +93,10 @@ const Question4Chart1 = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">
-        Bubble Chart - Population, GDP growth and crime rate per 100,000
-        inhabitants (2020) ({selectedYear})
-      </h2>
-      <p className="mb-4">
-        This chart shows the population (logarithmic, x-axis), GDP growth
-        (y-axis) GDP growth (y-axis) and the crime rate (size of the bubble) per
-        100,000 inhabitants for each country.
-      </p>
+    <div>
+      <ChartHeader title={"Crime Rate vs. Population & GDP Growth"} />
 
       <ExplanationSection title="Show Chart Explanation">
-        <h2 className="text-2xl font-bold mb-4">
-          How to Interpret the Bubble Chart
-        </h2>
         <p className="mb-4">
           This bubble chart plots three dimensions of country‑level data
           simultaneously:
@@ -126,7 +116,7 @@ const Question4Chart1 = () => {
           </li>
         </ul>
         <p className="mb-4">
-          <strong>Key Insights:</strong>
+          <strong>Interpretation:</strong>
         </p>
         <ul className="list-disc list-inside space-y-2">
           <li>
@@ -164,7 +154,7 @@ const Question4Chart1 = () => {
         />
       )}
 
-      <div className="mb-4">
+      <div className="mb-4 mt-4">
         <label className="mr-2">Bubble Scaler:</label>
         <input
           type="range"

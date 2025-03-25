@@ -10,24 +10,26 @@ import {
 } from "recharts";
 
 import Question3Chart1 from "@/components/question3/chart1";
-import Question3Chart2 from "@/components/question3/chart2";
-import Question3Chart3 from "@/components/question3/chart3";
 import Question3Chart4 from "@/components/question3/chart4";
+import Question3Chart5 from "@/components/question3/chart5";
+import SectionHeader from "@/components/sectionHeader";
+import FancyDivider from "@/components/fancyDivider";
 
 const Question3 = () => {
   return (
     <div>
-      <h1>Question 1</h1>
-      <p>This is the page for Question 3.</p>
-      <h2 className="mb-5">add stuff here...</h2>
-      <hr></hr>
-      <h3 className="text-xl">
-        How do legal status and gender influence involvement in bribery and
-        corruption across European countries?
-      </h3>
+      <SectionHeader
+        number={3}
+        title={
+          "How do legal status and gender influence involvement in bribery and corruption across European countries?"
+        }
+      />
+
       <Question3Chart1 />
-      <Question3Chart2 />
-      <Question3Chart3 />
+      <FancyDivider />
+      <Question3Chart5 />
+      <FancyDivider />
+      <p className="text-red-600 font-bold text-3xl">FIX OR REMOVE THIS</p>
       <Question3Chart4 />
     </div>
   );

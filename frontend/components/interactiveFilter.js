@@ -193,7 +193,16 @@ const InteractiveFilter = ({ interactiveData, onFilterChange }) => {
             const optionsList = opts[groupKey] || [];
             const multiple = interactiveData[groupKey].multiple;
             return (
-              <div key={idx} className="mb-6">
+              <div
+                key={idx}
+                className={`mb-6 ${
+                  Object.keys(interactiveData).length <= 1 &&
+                  typeof window !== "undefined" &&
+                  window.innerWidth < 768
+                    ? "flex-grow"
+                    : ""
+                }`}
+              >
                 <div className="flex justify-between items-center mb-2">
                   <h3 className="text-sm font-semibold text-gray-800">
                     {groupKey.charAt(0).toUpperCase() + groupKey.slice(1)}
@@ -212,7 +221,15 @@ const InteractiveFilter = ({ interactiveData, onFilterChange }) => {
                   onChange={(e) => handleSearchChange(groupKey, e.target.value)}
                   className="mb-3 w-full p-2 rounded border border-gray-300 text-sm text-black focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
-                <div className="max-h-60 overflow-y-auto pr-1">
+                <div
+                  className={`overflow-y-auto pr-1 ${
+                    Object.keys(interactiveData).length <= 1 &&
+                    typeof window !== "undefined" &&
+                    window.innerWidth < 768
+                      ? "flex-grow max-h-[calc(100vh-200px)]"
+                      : "max-h-60"
+                  }`}
+                >
                   {optionsList.map((option, index) => (
                     <InteractiveFilterOption
                       key={index}

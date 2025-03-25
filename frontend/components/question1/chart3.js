@@ -107,9 +107,27 @@ const Question1Chart3 = () => {
   return (
     <div className="p-4">
       <ChartHeader title="Frequency of crimes in one or more countries in a certain year" />
-      <ExplanationSection title="Explanation">
-        <p>TODO</p>
+      <ExplanationSection title="How to Read This Chart">
+        <h3 className="text-xl font-semibold mb-2">How to Read the Crime Frequency Bar Chart</h3>
+        <p className="mb-2">
+          This bar chart displays the frequency of reported crimes in one or more selected countries for a specific year. The categories are ranked by frequency to highlight the most prevalent crime types.
+        </p>
+        <ul className="list-disc list-inside space-y-1 mb-2">
+          <li>
+            <strong>Y-Axis (Crime Categories):</strong> Each bar represents a specific crime type.
+          </li>
+          <li>
+            <strong>X-Axis (Crime Count):</strong> The length of each bar indicates the number of reported crimes.
+          </li>
+          <li>
+            <strong>Sorting:</strong> The crimes are sorted in descending order, with the most frequently reported crimes appearing at the top.
+          </li>
+        </ul>
+        <p>
+          This visualization helps in identifying the most common crimes in a given country and time period. You can interact with the chart by filtering data based on geographic regions and time frames.
+        </p>
       </ExplanationSection>
+
       {interactiveData && interactiveData.geo && (
         <InteractiveFilter
           interactiveData={interactiveData}

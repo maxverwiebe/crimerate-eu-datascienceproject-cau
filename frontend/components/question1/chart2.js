@@ -134,13 +134,30 @@ const Question1Chart2 = () => {
   return (
     <div className="p-4 relative">
       <ChartHeader title="Trends in Police‑Recorded Crimes" />
-      <ExplanationSection>
+      <ExplanationSection title="How to Read This Chart">
+        <h3 className="text-xl font-semibold mb-2">How to Read the Crime Trends Radar Chart</h3>
+        <p className="mb-2">
+          This radar chart visualizes the distribution of different crime types across EU countries. Instead of showing numerical values in a table, it allows for an easy comparison of crime prevalence by category.
+        </p>
+        <ul className="list-disc list-inside space-y-1 mb-2">
+          <li>
+            <strong>Axes (Crime Categories):</strong> Each axis represents a specific crime type.
+          </li>
+          <li>
+            <strong>Distance from Center:</strong> The further a point is from the center, the higher the number of reported crimes for that category.
+          </li>
+          <li>
+            <strong>Country Profiles:</strong> Each country is represented by a distinct polygon, illustrating the relative crime distribution per category.
+          </li>
+        </ul>
         <p>
-          This radar chart shows the distribution of crime types across EU
-          countries. The chart is interactive, allowing you to hide specific
-          crime groups by clicking on the "Hide Crime Groups" button.
+          This visualization helps identify crime trends and compare crime prevalence between different countries. For example, a country with a larger polygon suggests a higher overall crime rate, while specific spikes in certain directions indicate dominant crime categories.
+        </p>
+        <p>
+          You can interact with the chart by filtering out specific crime categories using the "Hide Crime Groups" button.
         </p>
       </ExplanationSection>
+
       <div>
         {interactiveData && (
           <InteractiveFilter

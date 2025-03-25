@@ -4,6 +4,7 @@ import InteractiveFilter from "../interactiveFilter";
 import ChartHeader from "../chartHeader";
 import ExplanationSection from "../explanationSection";
 import ErrorAlert from "../errorAlert";
+import ChartLoading from "../chartLoading";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -90,14 +91,47 @@ const Question2Chart1 = () => {
     ],
   };
 
+  if (chartData.length === 0) {
+    return <ChartLoading />;
+  }
+
   return (
-    <div className="p-4">
-      <ChartHeader title={"Crime Rate by Region"} />
-      <ExplanationSection
-        explanation={
-          "This chart shows the crime rate in different regions. The crime rate is calculated as the number of crimes per 100,000 inhabitants."
-        }
-      />
+    <div>
+      <ChartHeader title={"Highest‑Crime Regions of a Country"} />
+      <ExplanationSection title="Show Chart Explanation">
+        <p className="mb-2">
+          This chart displays the total number of recorded crimes for each
+          region (city or district) within the selected country and time period.
+          Instead of showing crime rates per capita, it shows the absolute crime
+          count, allowing you to see which regions have the highest overall
+          crime volume.
+        </p>
+        <ul className="list-disc list-inside space-y-1 mb-2">
+          <li>
+            <strong>X‑Axis (City):</strong> Regions sorted in descending order
+            by total crime count.
+          </li>
+          <li>
+            <strong>Y‑Axis (Value):</strong> Absolute number of recorded crimes
+            in each region.
+          </li>
+          <li>
+            <strong>Show Top Regions Selector:</strong> Adjust how many top
+            regions (e.g., Top 5, Top 10) are displayed.
+          </li>
+        </ul>
+        <p className="mb-2">
+          Use the interactive filters above to select a different country (geo
+          code) or narrow down the time period. This helps you compare crime
+          volumes across regions and identify hotspots of high criminal
+          activity.
+        </p>
+        <p>
+          A higher point indicates a greater total crime burden in that areA.
+          Comparing these values side by side reveals which areas experience the
+          most crime overall.
+        </p>
+      </ExplanationSection>
 
       {interactiveData && (
         <div className="mb-6">
@@ -112,6 +146,7 @@ const Question2Chart1 = () => {
         <select
           value={topCount}
           onChange={(e) => setTopCount(parseInt(e.target.value))}
+          className="px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
         >
           <option value={5}>Top 5</option>
           <option value={10}>Top 10</option>

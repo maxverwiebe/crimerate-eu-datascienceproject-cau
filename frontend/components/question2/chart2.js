@@ -5,6 +5,7 @@ import ChartHeader from "../chartHeader";
 import ExplanationSection from "../explanationSection";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 import ErrorAlert from "../errorAlert";
+import ChartLoading from "../chartLoading";
 
 const Question2Chart2 = () => {
   const [chartData, setChartData] = useState({ times: [], series: [] });
@@ -32,10 +33,6 @@ const Question2Chart2 = () => {
       })
       .catch(console.error);
   }, [filters]);
-
-  if (chartData.times.length === 0) {
-    return <div>Lade Daten...</div>;
-  }
 
   let bubbleData = chartData.series.map((s) => {
     const start = s.data[0];
@@ -74,7 +71,6 @@ const Question2Chart2 = () => {
     },
   }));
 
-  // Hinzufügen von DataZoom-Komponenten als DragControls
   const option = {
     tooltip: {
       formatter: (params) => {
@@ -99,20 +95,20 @@ const Question2Chart2 = () => {
     },
     dataZoom: [
       {
-        type: "inside", // DragZoom innerhalb des Diagramms
+        type: "inside",
         xAxisIndex: 0,
         yAxisIndex: 0,
         start: 0,
         end: 100,
       },
       {
-        type: "slider", // Externer Slider (unten)
+        type: "slider",
         xAxisIndex: 0,
         start: 0,
         end: 100,
       },
       {
-        type: "slider", // Optionale y-Achse-Schieber (links)
+        type: "slider",
         yAxisIndex: 0,
         left: 0,
         start: 0,
@@ -150,58 +146,61 @@ const Question2Chart2 = () => {
     setFilters(newFilters);
   };
 
+  if (chartData.length === 0) {
+    return <ChartLoading />;
+  }
+
   return (
-    <div className="p-4">
-      <ChartHeader title="Regional Crime Dynamics: Growth vs Current Level" />
-      <ExplanationSection title="Explanation">
-        <p>
-          This chart is a bubble scatter plot that simultaneously visualizes
-          three different metrics for each region (e.g., city or administrative
-          area) in the selected country over the chosen time period. Each bubble
-          corresponds to one region.
+    <div>
+      <ChartHeader title="Comparing Crime Growth and Levels" />
+      <ExplanationSection title="Show Chart Explanation">
+        <p className="mb-2">
+          This bubble scatter plot compares each region’s change in total crime
+          with its current crime level, helping you spot emerging hotspots and
+          high‑burden areas.
         </p>
-        <p>
-          <strong>X‑Axis (Growth %):</strong> Shows the percentage change in
-          total reported crime between the first and last selected year. A
-          positive value indicates an increase in crime, while a negative value
-          indicates a decrease.
+        <ul className="list-disc list-inside mb-4">
+          <li>
+            <strong>X‑Axis (Growth %):</strong> Year‑over‑year percentage change
+            in total crimes.
+          </li>
+          <li>
+            <strong>Y‑Axis (Last Value):</strong> Absolute number of crimes in
+            the most recent year.
+          </li>
+          <li>
+            <strong>Bubble Size:</strong> Cumulative crime count across all
+            selected years.
+          </li>
+          <li>
+            <strong>DataZoom:</strong> Drag inside the chart or use sliders to
+            zoom in on specific ranges.
+          </li>
+        </ul>
+        <p className="mb-2">
+          <strong>Quadrant interpretation:</strong>
         </p>
-        <p>
-          <strong>Y‑Axis (Last Value):</strong> Represents the absolute number
-          of reported crimes in the last year of the selected time range,
-          providing a snapshot of the current crime level for each region.
-        </p>
-        <p>
-          <strong>Bubble Size (Total):</strong> Reflects the cumulative number
-          of reported crimes across all selected years. Larger bubbles indicate
-          regions with a higher overall crime volume over time.
-        </p>
-        <p>
-          Regions are sorted by total crime volume, and you can choose to
-          display the top 5, 10, 20, or 50 regions using the "Show Top Regions"
-          dropdown. This helps focus on areas with the greatest overall crime
-          burden.
-        </p>
-        <p>
-          <strong>Interpretation:</strong>
-          <ul>
-            <li>
-              Top‑right quadrant: Regions with high growth and high current
-              crime levels (rapidly worsening hotspots).
-            </li>
-            <li>
-              Bottom‑right quadrant: Regions with strong growth but lower
-              absolute crime levels (emerging hotspots).
-            </li>
-            <li>
-              Top‑left quadrant: Regions with high crime levels that have
-              remained stable or declined over time.
-            </li>
-            <li>
-              Bottom‑left quadrant: Regions with lower crime volumes and little
-              change over time.
-            </li>
-          </ul>
+        <ul className="list-disc list-inside mb-2">
+          <li>
+            <strong>Top‑right:</strong> High growth & high current crime
+            (rapidly worsening hotspots)
+          </li>
+          <li>
+            <strong>Bottom‑right:</strong> High growth, lower current crime
+            (emerging hotspots)
+          </li>
+          <li>
+            <strong>Top‑left:</strong> High current crime, stable or decreasing
+            (persistent hotspots)
+          </li>
+          <li>
+            <strong>Bottom‑left:</strong> Low crime & low change (stable
+            low‑risk areas)
+          </li>
+        </ul>
+        <p className="text-red-700">
+          As the diagram looks at a period of time, you have to select several
+          years! For example select Germany and years: 2012, 2013, 2014, 2015!
         </p>
       </ExplanationSection>
 
