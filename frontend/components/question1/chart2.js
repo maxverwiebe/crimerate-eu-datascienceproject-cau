@@ -135,7 +135,6 @@ const Question1Chart2 = () => {
     <div className="p-4 relative">
       <ChartHeader title="Trends in Police‑Recorded Crimes" />
       <ExplanationSection title="How to Read This Chart">
-        <h3 className="text-xl font-semibold mb-2">How to Read the Crime Trends Radar Chart</h3>
         <p className="mb-2">
           This radar chart visualizes the distribution of different crime types across EU countries. Instead of showing numerical values in a table, it allows for an easy comparison of crime prevalence by category.
         </p>

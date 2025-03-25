@@ -64,6 +64,7 @@ const Question1Chart1 = () => {
       .catch((error) => console.error("Error fetching data:", error));
   }, [filterCriteria]);
 
+
   const handleFilterChange = (newFilters) => {
     console.log("Neue Filterkriterien:", newFilters);
     setFilterCriteria(newFilters);
@@ -142,7 +143,6 @@ const Question1Chart1 = () => {
         title={"Crime categories reported by different countries in EU"}
       />
       <ExplanationSection title="How to Read This Chart">
-        <h3 className="text-xl font-semibold mb-2">How to Read the Crime Categories Bar Chart</h3>
         <p className="mb-2">
           This chart displays the number of crimes reported by different countries in the EU, categorized by crime type.
           Instead of showing raw values in a table, it uses a stacked bar chart where:

@@ -4,6 +4,7 @@ import InteractiveFilter from "../interactiveFilter";
 import ErrorAlert from "../errorAlert";
 import ChartHeader from "../chartHeader";
 import ChartLoading from "../chartLoading";
+import ExplanationSection from "../explanationSection";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question6Chart1 = () => {
@@ -153,6 +154,31 @@ const Question6Chart1 = () => {
   return (
     <div>
       <ChartHeader title="Gender distribution" />
+      <ExplanationSection title="How to Read This Chart">
+        <p className="mb-2">
+          This population pyramid chart visualizes the distribution of individuals involved in
+          crime cases, broken down by gender, for a selected legal status
+          (Suspected, Prosecuted, or Convicted) across different years and countries.
+          The data can be viewed either as the total number of individuals or
+          as the count per 100,000 inhabitants.
+        </p>
+        <ul className="list-disc list-inside space-y-1 mb-2">
+          <li>
+            <strong>X‑Axis (Number of Persons):</strong> Displays either the total number of individuals
+            or the count per 100,000 inhabitants, depending on the selected unit.
+          </li>
+          <li>
+            <strong>Y‑Axis (Country):</strong> Each row represents a selected country in Europe
+          </li>
+          <li>
+            <strong>Mirrored Bars:</strong> The chart is split into two sections:
+            Males on the left and Females on the right showing each gender’s
+            contribution to the total count.
+          </li>
+        </ul>
+      </ExplanationSection>
+
+
 
       <InteractiveFilter
         interactiveData={interactiveData}

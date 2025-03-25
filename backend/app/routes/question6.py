@@ -93,8 +93,9 @@ def chart2():
     dims = loader.get_dimensions('crim_just_sex')
     interactive_data = {
         "geo": {
+            "labels": dims.get('geo', {}).get('labels', []),
             "values": dims.get('geo', {}).get('codes', []),
-            "multiple": True,
+            "multiple": False,
             "default": None
         },
         "time": {
