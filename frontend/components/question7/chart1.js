@@ -131,7 +131,7 @@ export default function Question7Chart1Mini() {
               <LineChart data={miniChartData[age]}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="time" />
-                <YAxis domain={[0, 100]} />
+                <YAxis domain={[0, 50]} />
                 <Tooltip />
                 {countries.map((country, i) => (
                   <Line

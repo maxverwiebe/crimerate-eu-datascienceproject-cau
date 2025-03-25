@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
 import ExplanationSection from "../explanationSection";
 import ErrorAlert from "../errorAlert";
+import ChartHeader from "../chartHeader";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question4Chart2 = () => {
@@ -87,25 +88,17 @@ const Question4Chart2 = () => {
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">
-        Crime Rate, Population and GDP Over Time
-      </h2>
+    <div>
+      <ChartHeader title={"Crime Rate, Population and GDP Over Time"} />
 
       <ExplanationSection title="Show Chart Explanation">
-        <h3 className="text-xl font-semibold mb-2">How to Read This Chart</h3>
         <p className="mb-2">
-          This chart shows the{" "}
-          <strong>year-over-year percentage changes</strong> of key indicators
+          This chart shows the
+          <strong> year-over-year percentage changes</strong> of key indicators
           for the selected country. Instead of showing absolute numbers, it
           highlights how these metrics evolved over time in relative terms.
         </p>
         <ul className="list-disc list-inside space-y-1 mb-2">
-          <li>
-            <strong>Crime Rate Change (%):</strong> The percentage change in the
-            number of criminal offenses per 100,000 people compared to the
-            previous year.
-          </li>
           <li>
             <strong>Total Crime Change (%):</strong> The overall percentage
             change in the absolute number of recorded crimes.
