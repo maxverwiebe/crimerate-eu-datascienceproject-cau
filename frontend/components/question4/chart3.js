@@ -3,6 +3,7 @@ import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
 import ExplanationSection from "../explanationSection";
 import ErrorAlert from "../errorAlert";
+import ChartLoading from "../chartLoading";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question4Chart3 = () => {
@@ -36,7 +37,7 @@ const Question4Chart3 = () => {
       .catch(console.error);
   }, [filters]);
 
-  if (!data.length) return <div>Lade Daten...</div>;
+  if (!data) return <ChartLoading />;
 
   const option = {
     tooltip: {

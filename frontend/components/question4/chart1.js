@@ -35,7 +35,7 @@ const Question4Chart1 = () => {
       .catch(console.error);
   }, [selectedYear, selectedIccs]);
 
-  if (chartData.length === 0) {
+  if (!chartData) {
     return <ChartLoading />;
   }
 

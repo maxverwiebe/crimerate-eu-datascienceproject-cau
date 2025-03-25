@@ -5,6 +5,7 @@ import ExplanationSection from "../explanationSection";
 import ErrorAlert from "../errorAlert";
 import ChartHeader from "../chartHeader";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
+import ChartLoading from "../chartLoading";
 
 const Question4Chart2 = () => {
   const [chartData, setChartData] = useState([]);
@@ -30,8 +31,8 @@ const Question4Chart2 = () => {
       .catch(console.error);
   }, [filters]);
 
-  if (chartData.length === 0) {
-    return <div>Loading data...</div>;
+  if (!chartData) {
+    return <ChartLoading />;
   }
 
   const option = {
