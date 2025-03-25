@@ -4,6 +4,7 @@ import InteractiveFilter from "../interactiveFilter";
 import ErrorAlert from "../errorAlert";
 import ChartHeader from "../chartHeader";
 import ChartLoading from "../chartLoading";
+import ChartHeader from "../chartHeader";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question6Chart1 = () => {

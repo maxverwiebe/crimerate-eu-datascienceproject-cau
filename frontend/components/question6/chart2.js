@@ -5,6 +5,7 @@ import ChartHeader from "../chartHeader";
 import ExplanationSection from "../explanationSection";
 import ErrorAlert from "../errorAlert";
 import ChartLoading from "../chartLoading";
+
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 const Question6Chart2 = () => {
@@ -66,14 +67,65 @@ const Question6Chart2 = () => {
     },
     yAxis: { type: "value" },
     series: [
-      { name: "Males", type: "bar", stack: "total", data: chartData.male },
-      { name: "Females", type: "bar", stack: "total", data: chartData.female },
+      {
+        name: "Males",
+        type: "bar",
+        stack: "gender",
+        data:
+          selectedYear.length > 0
+            ? selectedYear
+                .sort((a, b) => a - b)
+                .map((year) =>
+                  processedData[year] ? processedData[year].male : 0
+                )
+            : [],
+        itemStyle: { color: "#5470C6" }, // Blue for males
+        barWidth: "40%",
+      },
+      {
+        name: "Females",
+        type: "bar",
+        stack: "gender",
+        data:
+          selectedYear.length > 0
+            ? selectedYear
+                .sort((a, b) => a - b)
+                .map((year) =>
+                  processedData[year] ? processedData[year].female : 0
+                )
+            : [],
+        itemStyle: { color: "#EE6666" }, // Red for females
+        barWidth: "40%",
+      },
     ],
   };
 
-  if (!chartData) {
-    return <ChartLoading />;
-  }
+  const handleFilterChange = (updatedFilters) => {
+    setSelectedYear(updatedFilters.year || selectedYear);
+    setSelectedUnit(updatedFilters.unit || selectedUnit);
+    setSelectedCountries(updatedFilters.countries || selectedCountries);
+  };
+
+  const interactiveData = {
+    year: {
+      default: selectedYear,
+      values: years,
+      labels: years,
+      multiple: true, // Multiple years selectable
+    },
+    unit: {
+      default: selectedUnit,
+      values: ["Number", "Per100k"],
+      labels: ["Number", "Per100k"],
+      multiple: false, // Only one unit selectable
+    },
+    countries: {
+      default: selectedCountries,
+      values: countriesList,
+      labels: countriesList,
+      multiple: false, // Only one country selectable
+    },
+  };
 
   return (
     <div>
