@@ -121,6 +121,7 @@ def chart3():
     df_pop = loader.load_dataset('tps00001')
     df_gdp = loader.load_dataset('tec00115')
     df_crime = loader.load_dataset('crim_off_cat')
+    geo_labels = loader.get_dimensions('crim_off_cat')['geo']['labels']
 
     pop = (
         df_pop[df_pop['time'] == year]
@@ -145,8 +146,10 @@ def chart3():
 
     merged = pop.merge(gdp, on='geo_code').merge(crime, on='geo_code')
     merged['crime_rate_per_100k'] = merged['crime_rate'] / merged['population'] * 100000
+    print(merged)
 
     all_codes = merged['geo_code'].unique().tolist()
+    all_labels = merged['country'].unique().tolist()
     valid_codes = [code for code in geo_codes if code in all_codes]
     filtered = merged[merged['geo_code'].isin(valid_codes)]
 
@@ -157,7 +160,7 @@ def chart3():
         interactive_data={
             "time": {"values": sorted(df_pop['time'].unique().tolist()), "multiple": False, "default": year},
             "iccs": {"values": sorted(df_crime['iccs'].unique().tolist()), "multiple": False, "default": iccs},
-            "geo": {"values": sorted(all_codes), "multiple": True, "default": None}
+            "geo": {"labels":sorted(all_labels),"values": sorted(all_codes), "multiple": True, "default": None}
         }
     )
 

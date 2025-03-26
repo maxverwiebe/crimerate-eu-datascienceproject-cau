@@ -18,8 +18,7 @@ const Question4Chart2 = () => {
     if (filters.geo) params.append("geo", filters.geo);
 
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_API
+      `${process.env.NEXT_PUBLIC_BACKEND_API
       }/api/question4/chart2?${params.toString()}`
     )
       .then((res) => res.json())
@@ -92,9 +91,9 @@ const Question4Chart2 = () => {
     <div>
       <ChartHeader title={"Crime Rate, Population and GDP Over Time"} />
 
-      <ExplanationSection title="Show Chart Explanation">
+      <ExplanationSection title="How to Read this Chart">
         <p className="mb-2">
-          This chart shows the
+          This multi-line chart shows the
           <strong> year-over-year percentage changes</strong> of key indicators
           for the selected country. Instead of showing absolute numbers, it
           highlights how these metrics evolved over time in relative terms.
