@@ -2,6 +2,45 @@ from flask import Blueprint, jsonify, request
 from .es_dataloader import EurostatDataLoader
 import pandas as pd
 
+def filter_geo_data(dims):
+    """
+    Filtert die 'geo' Dimension, um bestimmte Codes und Labels zu entfernen.
+    """
+    # Sicherstellen, dass 'geo' im dims vorhanden ist
+    if 'geo' not in dims:
+        return [], []  # Rückgabe leerer Listen, falls 'geo' nicht vorhanden ist
+
+    # Codes und Labels aus dims extrahieren
+    filter_geo_codes = dims['geo']['codes']
+    filter_geo_labels = dims['geo']['labels']
+
+    # Liste der zu entfernenden Codes
+    exclude_codes = {'EU', 'EU28', 'EU27_2007', 'EA', 'EA20', 'EA19', 'EA18'}
+
+    # Liste der zu entfernenden Labels
+    exclude_labels = {
+        'European Union (EU6-1958, EU9-1973, EU10-1981, EU12-1986, EU15-1995, EU25-2004, EU27-2007, EU28-2013, EU27-2020)',
+        'European Union - 28 countries (2013-2020)',
+        'European Union - 27 countries (2007-2013)',
+        'Euro area (EA11-1999, EA12-2001, EA13-2007, EA15-2008, EA16-2009, EA17-2011, EA18-2014, EA19-2015, EA20-2023)',
+        'Euro area – 20 countries (from 2023)',
+        'Euro area - 19 countries  (2015-2022)',
+        'Euro area - 18 countries (2014)',
+    }
+
+    # Beide Listen filtern
+    filtered_geo = [
+        (code, label) for code, label in zip(filter_geo_codes, filter_geo_labels)
+        if code not in exclude_codes and label not in exclude_labels
+    ]
+
+    # Entpacken in separate Listen
+    if filtered_geo:
+        filter_geo_codes, filter_geo_labels = zip(*filtered_geo)
+        return list(filter_geo_codes), list(filter_geo_labels)
+    else:
+        return [], []  # Falls keine Filterergebnisse, leere Listen zurückgeben
+
 def preprocess_q7(df):   
     df = df.dropna()
     df = df[df['sex'] == 'Total']
@@ -15,8 +54,6 @@ def preprocess_q7(df):
         'From 55 to 64 years',
         '65 years or over'
     ]
-
-    df = df[df['age'].isin(age_categories)]
     geo_values_to_remove = [
         'European Union (EU6-1958, EU9-1973, EU10-1981, EU12-1986, EU15-1995, EU25-2004, EU27-2007, EU28-2013, EU27-2020)',
         'European Union - 28 countries (2013-2020)',
@@ -27,6 +64,9 @@ def preprocess_q7(df):
         'Euro area - 18 countries (2014)'
     ]
     df = df[~df['geo'].isin(geo_values_to_remove)]
+
+    df = df[df['age'].isin(age_categories)]
+    
 
     return df
 
@@ -88,12 +128,12 @@ def chart1():
         nested_data[geo] = sorted_time
 
     dims = loader.get_dimensions('hlth_dhc130')
-    filter_geo = dims['geo']['codes'] if 'geo' in dims else []
+    filter_geo_codes, filter_geo_labels = filter_geo_data(dims)
 
     interactive_data = {
         "geo": {
-            "values": filter_geo,
-            "labels": dims['geo']['labels'] if 'geo' in dims else [],
+            "values": filter_geo_codes,
+            "labels": filter_geo_labels,
             "multiple": True,
             "default": "DE"
         }
@@ -119,30 +159,24 @@ def chart2():
     df = loader.load_dataset('hlth_dhc130', filters=filters)
     df = preprocess_q7(df)
     
-    print("Verfügbare Ländereinträge im Datensatz:", df['geo'].unique())
-    
     if df.empty:
         print("Warnung: DataFrame ist leer nach Filterung mit:", countries_param)
     
-    age_sum = df.groupby('age')['value'].sum().reset_index()
-    total = age_sum['value'].sum()
-    age_sum['percentage'] = (age_sum['value'] / total * 100).round(2)
-    
-    result = dict(zip(age_sum['age'], age_sum['percentage']))
+    result = dict(zip(df['age'], df['value']))
     
     dims = loader.get_dimensions('hlth_dhc130')
-    filter_geo = dims['geo']['codes'] if 'geo' in dims else []
+    filter_geo_codes, filter_geo_labels = filter_geo_data(dims)
     filter_time = dims['time']['codes'] if 'time' in dims else []
     
     interactive_data = {
-        "geo": filter_geo,
+        "geo": filter_geo_codes,
         "time": filter_time
     }
 
     interactive_data = {
         "geo": {
-            "values": filter_geo,
-            "labels": dims['geo']['labels'] if 'geo' in dims else [],
+            "values": filter_geo_codes,
+            "labels": filter_geo_labels,
             "multiple": False,
             "default": "DE"
         },
