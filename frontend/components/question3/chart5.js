@@ -25,8 +25,7 @@ const Question3Chart5 = () => {
     filters.legal_status?.forEach((l) => params.append("legal_status", l));
 
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_API
+      `${process.env.NEXT_PUBLIC_BACKEND_API
       }/api/question3/chart5?${params.toString()}`
     )
       .then((res) => res.json())
@@ -78,7 +77,7 @@ const Question3Chart5 = () => {
     <div>
       <ChartHeader title="Bribery & Corruption Across Europe" />
 
-      <ExplanationSection title="Chart Explanation">
+      <ExplanationSection title="How to read this chart">
         <p className="mb-2">
           This choropleth map visualizes the number of recorded bribery and
           corruption incidents per country for the selected year(s). Darker

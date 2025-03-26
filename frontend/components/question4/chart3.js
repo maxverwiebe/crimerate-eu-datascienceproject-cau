@@ -80,7 +80,7 @@ const Question4Chart3 = () => {
         Population, GDP & Criminality ({filters.time})
       </h2>
 
-      <ExplanationSection title="Show Chart Explanation">
+      <ExplanationSection title="How to read this chart">
         <p className="mb-4">
           This parallel coordinate chart visualizes three key metrics for each country on parallel
           axes:

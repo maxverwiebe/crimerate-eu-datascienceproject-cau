@@ -21,8 +21,7 @@ const Question2Chart2 = () => {
     if (filters.unit) params.append("unit", filters.unit);
 
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_API
+      `${process.env.NEXT_PUBLIC_BACKEND_API
       }/api/question2/chart2?${params.toString()}`
     )
       .then((res) => res.json())
@@ -117,28 +116,28 @@ const Question2Chart2 = () => {
     ],
     series: true
       ? [
-          {
-            type: "scatter",
-            symbolSize: function (data) {
-              return Math.sqrt(data[2]) * 0.1;
+        {
+          type: "scatter",
+          symbolSize: function (data) {
+            return Math.sqrt(data[2]) * 0.1;
+          },
+          data: scatterData,
+          label: {
+            show: true,
+            formatter: (params) => {
+              return bubbleData[params.dataIndex].name;
             },
-            data: scatterData,
+            position: "top",
+          },
+          emphasis: {
             label: {
               show: true,
-              formatter: (params) => {
-                return bubbleData[params.dataIndex].name;
-              },
-              position: "top",
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontWeight: "bold",
-                fontSize: 14,
-              },
+              fontWeight: "bold",
+              fontSize: 14,
             },
           },
-        ]
+        },
+      ]
       : [],
   };
 
@@ -153,7 +152,7 @@ const Question2Chart2 = () => {
   return (
     <div>
       <ChartHeader title="Comparing Crime Growth and Levels" />
-      <ExplanationSection title="Show Chart Explanation">
+      <ExplanationSection title="How to Read this Chart">
         <p className="mb-2">
           This bubble scatter plot compares each region’s change in total crime
           with its current crime level, helping you spot emerging hotspots and
