@@ -21,7 +21,7 @@ const Question1 = () => {
     <div>
       <SectionHeader
         number={1}
-        title="How do trends in police recorded crimes differ between all EU countries? Whats the most happening crime in the EU?"
+        title="How do trends in police recorded crimes differ between European countries?"
       />
       <Question1Chart1 />
       <FancyDivider />

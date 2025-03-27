@@ -136,7 +136,7 @@ const Question1Chart2 = () => {
       <ChartHeader title="Trends in Police‑Recorded Crimes" />
       <ExplanationSection title="How to Read This Chart">
         <p className="mb-2">
-          This radar chart visualizes the distribution of different crime types across EU countries. Instead of showing numerical values in a table, it allows for an easy comparison of crime prevalence by category.
+          This radar chart visualizes the distribution of different crime types across countries in Europe. Instead of showing numerical values in a table, it allows for an easy comparison of crime prevalence by category.
         </p>
         <ul className="list-disc list-inside space-y-1 mb-2">
           <li>

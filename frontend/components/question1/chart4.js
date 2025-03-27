@@ -65,7 +65,7 @@ const Question1Chart4 = () => {
       <ExplanationSection title="How to Read this Chart">
         <p className="mb-2">
           This choropleth map shows the latest crime rate per 100 000
-          inhabitants for each EU country. Darker shading indicates a higher
+          inhabitants for each country in Europe. Darker shading indicates a higher
           crime rate.
         </p>
         <ul className="list-disc list-inside space-y-1 mb-2">

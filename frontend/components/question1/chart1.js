@@ -66,7 +66,7 @@ const Question1Chart1 = () => {
 
 
   const handleFilterChange = (newFilters) => {
-    console.log("Neue Filterkriterien:", newFilters);
+    console.log("NEuropee Filterkriterien:", newFilters);
     setFilterCriteria(newFilters);
   };
 
@@ -140,11 +140,11 @@ const Question1Chart1 = () => {
   return (
     <div>
       <ChartHeader
-        title={"Crime categories reported by different countries in EU"}
+        title={"Crime categories reported by different countries in Europe"}
       />
       <ExplanationSection title="How to Read This Chart">
         <p className="mb-2">
-          This chart displays the number of crimes reported by different countries in the EU, categorized by crime type.
+          This chart displays the number of crimes reported by different countries in Europe, categorized by crime type.
           Instead of showing raw values in a table, it uses a stacked bar chart where:
         </p>
         <ul className="list-disc list-inside space-y-1 mb-2">
