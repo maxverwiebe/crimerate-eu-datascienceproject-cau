@@ -11,7 +11,7 @@ const Question2 = () => {
       <SectionHeader
         number={2}
         title={
-          "How has the trend of police-recorded crimes evolved in various cities across the EU?"
+          "How has the trend of police-recorded crimes evolved in various cities across Europe?"
         }
       />
       <Question2Chart1 />

@@ -162,6 +162,18 @@ const Question2Chart1 = () => {
       <div style={{ overflowX: "auto" }}>
         <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
       </div>
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/crim_gen_reg"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_gen_reg
+        </a>
+      </p>
     </div>
   );
 };

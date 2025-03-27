@@ -64,9 +64,8 @@ const Question1Chart1 = () => {
       .catch((error) => console.error("Error fetching data:", error));
   }, [filterCriteria]);
 
-
   const handleFilterChange = (newFilters) => {
-    console.log("Neue Filterkriterien:", newFilters);
+    console.log("NEuropee Filterkriterien:", newFilters);
     setFilterCriteria(newFilters);
   };
 
@@ -140,29 +139,38 @@ const Question1Chart1 = () => {
   return (
     <div>
       <ChartHeader
-        title={"Crime categories reported by different countries in EU"}
+        title={"Crime categories reported by different countries in Europe"}
       />
       <ExplanationSection title="How to Read This Chart">
         <p className="mb-2">
-          This chart displays the number of crimes reported by different countries in the EU, categorized by crime type.
-          Instead of showing raw values in a table, it uses a stacked bar chart where:
+          This chart displays the number of crimes reported by different
+          countries in Europe, categorized by crime type. Instead of showing raw
+          values in a table, it uses a stacked bar chart where:
         </p>
         <ul className="list-disc list-inside space-y-1 mb-2">
           <li>
-            <strong>X‑Axis (Country):</strong> Represents different countries in the dataset.
+            <strong>X‑Axis (Country):</strong> Represents different countries in
+            the dataset.
           </li>
           <li>
-            <strong>Y‑Axis (Number of Crimes):</strong> The total number of reported crimes for each country.
+            <strong>Y‑Axis (Number of Crimes):</strong> The total number of
+            reported crimes for each country.
           </li>
           <li>
-            <strong>Stacked Bars:</strong> Each color represents a specific crime category. The height of a stack indicates the total number of reported crimes for that country.
+            <strong>Stacked Bars:</strong> Each color represents a specific
+            crime category. The height of a stack indicates the total number of
+            reported crimes for that country.
           </li>
         </ul>
         <p>
-          This visualization allows you to compare crime levels between countries and identify which crime categories are more prevalent in each nation. For instance, a country with a particularly high total bar suggests a high crime rate across multiple categories.
+          This visualization allows you to compare crime levels between
+          countries and identify which crime categories are more prevalent in
+          each nation. For instance, a country with a particularly high total
+          bar suggests a high crime rate across multiple categories.
         </p>
         <p>
-          Use the interactive filter to adjust the dataset and explore specific time frames or geographic regions.
+          Use the interactive filter to adjust the dataset and explore specific
+          time frames or geographic regions.
         </p>
       </ExplanationSection>
 
@@ -182,6 +190,17 @@ const Question1Chart1 = () => {
       <div style={{ overflowX: "auto" }}>
         <ReactECharts option={option} style={{ width: "100%", height: 600 }} />
       </div>
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/CRIM_OFF_CAT"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_off_cat
+        </a>
+      </p>
     </div>
   );
 };

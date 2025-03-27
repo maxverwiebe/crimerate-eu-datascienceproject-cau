@@ -9,12 +9,12 @@ export default function Navbar() {
   const links = [
     {
       label:
-        "1. How do trends in police recorded crimes differ between all EU countries? Whats the most happening crime in the EU?",
+        "1. How do trends in police recorded crimes differ between all European countries?",
       href: "/question1",
     },
     {
       label:
-        "2. How has the trend of police-recorded crimes evolved in various cities across the EU?",
+        "2. How has the trend of police-recorded crimes evolved in various cities across Europe?",
       href: "/question2",
     },
     {
@@ -29,7 +29,7 @@ export default function Navbar() {
     },
     {
       label:
-        "5. What is the relationship between income levels and crime rates? (urbanisation)",
+        "5. How does an increased police presence impact crime rates across different countries in Europe?",
       href: "/question5",
     },
     {

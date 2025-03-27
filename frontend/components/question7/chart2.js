@@ -92,25 +92,34 @@ export default function Question7Chart2() {
       <ChartHeader title="Age-Group Crime Distribution" />
       <ExplanationSection title="How to Read This Chart">
         <p className="mb-2">
-          This radial bar chart shows the percentage of each age group that has committed crimes for the selected country and year.
-          The longer the bar, the higher the percentage of people in that age group who have committed a crime.
+          This radial bar chart shows the percentage of each age group that has
+          committed crimes for the selected country and year. The longer the
+          bar, the higher the percentage of people in that age group who have
+          committed a crime.
         </p>
         <ul className="list-disc list-inside space-y-1 mb-2">
           <li>
-            <strong>Bars:</strong> Each bar represents a different age group. The length of the bar corresponds to the percentage of individuals in that age group who have committed crimes.
+            <strong>Bars:</strong> Each bar represents a different age group.
+            The length of the bar corresponds to the percentage of individuals
+            in that age group who have committed crimes.
           </li>
           <li>
-            <strong>Percentage:</strong> The percentage displayed inside the bars indicates the proportion of people from the respective age group who have committed a crime in the given year.
+            <strong>Percentage:</strong> The percentage displayed inside the
+            bars indicates the proportion of people from the respective age
+            group who have committed a crime in the given year.
           </li>
           <li>
-            <strong>Country and Year:</strong> The chart is based on the selected country and year. Use the filter above to choose a different country or time period.
+            <strong>Country and Year:</strong> The chart is based on the
+            selected country and year. Use the filter above to choose a
+            different country or time period.
           </li>
         </ul>
         <p className="mb-2">
-          Use the filter above to select a different country or time period and explore how the percentage of crime commission varies across age groups.
+          Use the filter above to select a different country or time period and
+          explore how the percentage of crime commission varies across age
+          groups.
         </p>
       </ExplanationSection>
-
 
       {interactiveData && (
         <InteractiveFilter
@@ -122,6 +131,18 @@ export default function Question7Chart2() {
       {error && <ErrorAlert message={error} onClose={() => setError(null)} />}
 
       <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/hlth_dhc130"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat hlth_dhc130
+        </a>
+      </p>
     </div>
   );
 }

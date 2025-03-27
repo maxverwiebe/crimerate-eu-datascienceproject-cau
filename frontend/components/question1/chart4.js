@@ -24,7 +24,8 @@ const Question1Chart4 = () => {
     filters.time?.forEach((g) => params.append("time", g));
 
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_API
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_API
       }/api/question1/chart4?${params.toString()}`
     )
       .then((res) => res.json())
@@ -65,8 +66,8 @@ const Question1Chart4 = () => {
       <ExplanationSection title="How to Read this Chart">
         <p className="mb-2">
           This choropleth map shows the latest crime rate per 100 000
-          inhabitants for each EU country. Darker shading indicates a higher
-          crime rate.
+          inhabitants for each country in Europe. Darker shading indicates a
+          higher crime rate.
         </p>
         <ul className="list-disc list-inside space-y-1 mb-2">
           <li>
@@ -102,6 +103,18 @@ const Question1Chart4 = () => {
           />
         </div>
       </div>
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/CRIM_OFF_CAT"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_off_cat
+        </a>
+      </p>
     </div>
   );
 };

@@ -25,7 +25,8 @@ const Question3Chart5 = () => {
     filters.legal_status?.forEach((l) => params.append("legal_status", l));
 
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_API
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_API
       }/api/question3/chart5?${params.toString()}`
     )
       .then((res) => res.json())
@@ -119,6 +120,18 @@ const Question3Chart5 = () => {
           to
         />
       </div>
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/crim_just_bri"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_just_bri
+        </a>
+      </p>
     </div>
   );
 };

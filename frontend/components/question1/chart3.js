@@ -108,23 +108,32 @@ const Question1Chart3 = () => {
     <div className="p-4">
       <ChartHeader title="Frequency of crimes in one or more countries in a certain year" />
       <ExplanationSection title="How to Read This Chart">
-        <h3 className="text-xl font-semibold mb-2">How to Read the Crime Frequency Bar Chart</h3>
+        <h3 className="text-xl font-semibold mb-2">
+          How to Read the Crime Frequency Bar Chart
+        </h3>
         <p className="mb-2">
-          This bar chart displays the frequency of reported crimes in one or more selected countries for a specific year. The categories are ranked by frequency to highlight the most prevalent crime types.
+          This bar chart displays the frequency of reported crimes in one or
+          more selected countries for a specific year. The categories are ranked
+          by frequency to highlight the most prevalent crime types.
         </p>
         <ul className="list-disc list-inside space-y-1 mb-2">
           <li>
-            <strong>Y-Axis (Crime Categories):</strong> Each bar represents a specific crime type.
+            <strong>Y-Axis (Crime Categories):</strong> Each bar represents a
+            specific crime type.
           </li>
           <li>
-            <strong>X-Axis (Crime Count):</strong> The length of each bar indicates the number of reported crimes.
+            <strong>X-Axis (Crime Count):</strong> The length of each bar
+            indicates the number of reported crimes.
           </li>
           <li>
-            <strong>Sorting:</strong> The crimes are sorted in descending order, with the most frequently reported crimes appearing at the top.
+            <strong>Sorting:</strong> The crimes are sorted in descending order,
+            with the most frequently reported crimes appearing at the top.
           </li>
         </ul>
         <p>
-          This visualization helps in identifying the most common crimes in a given country and time period. You can interact with the chart by filtering data based on geographic regions and time frames.
+          This visualization helps in identifying the most common crimes in a
+          given country and time period. You can interact with the chart by
+          filtering data based on geographic regions and time frames.
         </p>
       </ExplanationSection>
 
@@ -142,6 +151,17 @@ const Question1Chart3 = () => {
       <div style={{ overflowX: "auto" }}>
         <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
       </div>
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/CRIM_OFF_CAT"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_off_cat
+        </a>
+      </p>
     </div>
   );
 };

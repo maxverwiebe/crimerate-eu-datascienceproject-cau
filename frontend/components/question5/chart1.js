@@ -153,6 +153,27 @@ const Question5Chart1 = () => {
         style={{ width: "100%", height: 500 }}
         notMerge={true}
       />
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/crim_just_job"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_just_job
+        </a>
+        {", "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/crim_off_cat"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_off_cat
+        </a>
+      </p>
     </div>
   );
 };

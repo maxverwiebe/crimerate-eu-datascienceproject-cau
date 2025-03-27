@@ -2,10 +2,12 @@ from flask import Blueprint, jsonify, request
 from .es_dataloader import EurostatDataLoader
 import pandas as pd
 from .chart_response import ChartResponse
+from app import cache
 
 question3_bp = Blueprint('question3', __name__)
 
 @question3_bp.route('/chart1', methods=['GET'])
+@cache.cached(timeout=1800, query_string=True)
 def chart1():
     loader = EurostatDataLoader()
     resp = ChartResponse(chart_data=None)
@@ -70,6 +72,7 @@ def chart1():
 
 
 @question3_bp.route('/chart2', methods=['GET'])
+@cache.cached(timeout=1800, query_string=True)
 def chart2():
     loader = EurostatDataLoader()
     resp = ChartResponse(chart_data=None)
@@ -150,6 +153,7 @@ def chart2():
 
 
 @question3_bp.route('/chart5', methods=['GET'])
+@cache.cached(timeout=1800, query_string=True)
 def chart5():
     loader = EurostatDataLoader()
     resp = ChartResponse(chart_data=None)
@@ -160,11 +164,6 @@ def chart5():
             "values": dims['time']['codes'],
             "multiple": False,
             "default": None
-        },
-        "unit": {
-            "values": ["Number", "Per hundred thousand inhabitants"],
-            "multiple": False,
-            "default": "Number"
         }
     }
 
