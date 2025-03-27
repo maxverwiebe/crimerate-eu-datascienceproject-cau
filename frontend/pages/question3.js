@@ -28,9 +28,6 @@ const Question3 = () => {
       <Question3Chart1 />
       <FancyDivider />
       <Question3Chart5 />
-      <FancyDivider />
-      <p className="text-red-600 font-bold text-3xl">FIX OR REMOVE THIS</p>
-      <Question3Chart4 />
     </div>
   );
 };
