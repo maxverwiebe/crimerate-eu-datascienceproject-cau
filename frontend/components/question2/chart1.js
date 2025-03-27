@@ -98,7 +98,7 @@ const Question2Chart1 = () => {
   return (
     <div>
       <ChartHeader title={"Highest‑Crime Regions of a Country"} />
-      <ExplanationSection title="Show Chart Explanation">
+      <ExplanationSection title="How to Read this Chart">
         <p className="mb-2">
           This chart displays the total number of recorded crimes for each
           region (city or district) within the selected country and time period.

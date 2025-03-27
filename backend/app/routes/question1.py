@@ -18,7 +18,8 @@ def chart1():
             "default": None
         },
         "geo": {
-            "values": dims.get('geo', {}).get('labels', []),
+            "labels": dims.get('geo', {}).get('labels', []),
+            "values": dims.get('geo', {}).get('codes', []),
             "multiple": True,
             "default": None
         }

@@ -68,7 +68,7 @@ const Question6Chart2 = () => {
     yAxis: { type: "value" },
     series: [
       { name: "Males", type: "bar", stack: "total", data: chartData.male },
-      { name: "Females", type: "bar", stack: "total", data: chartData.female },
+      { name: "Females", type: "bar", stack: "total", data: chartData.female, itemStyle: { color: "#EE6666" } },
     ],
   };
 
@@ -82,7 +82,7 @@ const Question6Chart2 = () => {
         <p className="mb-2">
           This stacked bar chart shows the number of individuals involved in
           crime cases broken down by gender—for a chosen legal status
-          (Suspected, Prosecuted, or Convicted) across time.
+          (Suspected, Prosecuted, or Convicted) across time for each country.
         </p>
         <ul className="list-disc list-inside space-y-1 mb-2">
           <li>
@@ -93,20 +93,11 @@ const Question6Chart2 = () => {
             recorded for the selected legal status in that year.
           </li>
           <li>
-            <strong>Stacked Bars:</strong> Each bar is split into two segments—
-            <em>Males</em> and <em>Females</em>—showing each gender’s
+            <strong>Stacked Bars:</strong> Each bar is split into two segments:
+            Males and Females showing each gender’s
             contribution to the total count.
           </li>
         </ul>
-        <p className="mb-2">
-          By stacking gender counts, you can quickly compare overall trends over
-          time as well as shifts in gender distribution within each legal status
-          category.
-        </p>
-        <p className="text-red-700">
-          Selecting multiple countries will aggregate the data for all selected
-          countries.
-        </p>
       </ExplanationSection>
 
       {interactiveData && (

@@ -56,46 +56,61 @@ export default function Question7Chart2() {
   if (!data.length && !error) return <ChartLoading />;
 
   const option = {
-    tooltip: {
-      trigger: "item",
-      formatter: "{b}: {c}% ({d}%)",
-    },
-    legend: {
-      orient: "horizontal",
-      bottom: 0,
+    angleAxis: {
+      type: "category",
       data: data.map((d) => d.name),
+      z: 10,
     },
+    radiusAxis: {
+      min: 0,
+      max: Math.round(Math.max(...data.map((d) => d.value)) * 1.2),
+    },
+    polar: {},
     series: [
       {
-        name: "Age Group Share",
-        type: "pie",
-        radius: ["50%", "75%"],
-        avoidLabelOverlap: false,
+        type: "bar",
+        data: data.map((d, i) => ({
+          value: d.value,
+          itemStyle: { color: COLORS[i % COLORS.length] },
+        })),
+        coordinateSystem: "polar",
         label: {
           show: true,
-          position: "inside",
-          formatter: "{d}%",
+          position: "outside",
+          formatter: "{c}%",
         },
-        emphasis: {
-          label: { show: true, fontSize: 16, fontWeight: "bold" },
-        },
-        data,
-        color: COLORS,
       },
     ],
+    tooltip: {
+      trigger: "item",
+      formatter: "{b}: {c}%",
+    },
   };
 
   return (
     <div>
-      <ChartHeader title="Age‑Group Distribution (Percentage)" />
+      <ChartHeader title="Age-Group Crime Distribution" />
       <ExplanationSection title="How to Read This Chart">
-        <p>
-          This donut chart shows the share (%) of each age group in the total
-          number of cases for the selected country and year. Hover over a slice
-          to see exact percentages.
+        <p className="mb-2">
+          This radial bar chart shows the percentage of each age group that has committed crimes for the selected country and year.
+          The longer the bar, the higher the percentage of people in that age group who have committed a crime.
         </p>
-        <p>Use the filter above to pick a different country or time period.</p>
+        <ul className="list-disc list-inside space-y-1 mb-2">
+          <li>
+            <strong>Bars:</strong> Each bar represents a different age group. The length of the bar corresponds to the percentage of individuals in that age group who have committed crimes.
+          </li>
+          <li>
+            <strong>Percentage:</strong> The percentage displayed inside the bars indicates the proportion of people from the respective age group who have committed a crime in the given year.
+          </li>
+          <li>
+            <strong>Country and Year:</strong> The chart is based on the selected country and year. Use the filter above to choose a different country or time period.
+          </li>
+        </ul>
+        <p className="mb-2">
+          Use the filter above to select a different country or time period and explore how the percentage of crime commission varies across age groups.
+        </p>
       </ExplanationSection>
+
 
       {interactiveData && (
         <InteractiveFilter

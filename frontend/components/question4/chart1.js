@@ -20,8 +20,7 @@ const Question4Chart1 = () => {
 
   useEffect(() => {
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_API
+      `${process.env.NEXT_PUBLIC_BACKEND_API
       }/api/question4/chart1?time=${selectedYear}&iccs=${encodeURIComponent(
         selectedIccs
       )}`
@@ -96,7 +95,7 @@ const Question4Chart1 = () => {
     <div>
       <ChartHeader title={"Crime Rate vs. Population & GDP Growth"} />
 
-      <ExplanationSection title="Show Chart Explanation">
+      <ExplanationSection title="How to Read this Chart">
         <p className="mb-4">
           This bubble chart plots three dimensions of country‑level data
           simultaneously:

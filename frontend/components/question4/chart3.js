@@ -24,8 +24,7 @@ const Question4Chart3 = () => {
     filters.geo?.forEach((g) => params.append("geo", g));
 
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_API
+      `${process.env.NEXT_PUBLIC_BACKEND_API
       }/api/question4/chart3?${params.toString()}`
     )
       .then((res) => res.json())
@@ -78,15 +77,12 @@ const Question4Chart3 = () => {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4">
-        Parallel Coordinates – Population, GDP & Criminality ({filters.time})
+        Population, GDP & Criminality ({filters.time})
       </h2>
 
-      <ExplanationSection title="Show Chart Explanation">
-        <h2 className="text-2xl font-bold mb-4">
-          How to Interpret the Parallel Coordinates Chart
-        </h2>
+      <ExplanationSection title="How to read this chart">
         <p className="mb-4">
-          This chart visualizes three key metrics for each country on parallel
+          This parallel coordinate chart visualizes three key metrics for each country on parallel
           axes:
         </p>
         <ul className="list-disc list-inside space-y-2 mb-4">

@@ -21,8 +21,7 @@ const Question3Chart1 = () => {
     if (filters.unit) params.append("unit", filters.unit);
 
     fetch(
-      `${
-        process.env.NEXT_PUBLIC_BACKEND_API
+      `${process.env.NEXT_PUBLIC_BACKEND_API
       }/api/question3/chart1?${params.toString()}`
     )
       .then((res) => res.json())
@@ -73,8 +72,7 @@ const Question3Chart1 = () => {
     tooltip: {
       position: "top",
       formatter: ({ data }) =>
-        `<strong>${countries[data[0]]}</strong><br/>Year: ${
-          years[data[1]]
+        `<strong>${countries[data[0]]}</strong><br/>Year: ${years[data[1]]
         }<br/>Value: ${data[2].toFixed(0)}`,
     },
     xAxis: {
@@ -111,7 +109,7 @@ const Question3Chart1 = () => {
     <div>
       <ChartHeader title="Bribery & Corruption Cases" />
 
-      <ExplanationSection title="Chart Explanation">
+      <ExplanationSection title="How to Read this Chart">
         <p className="mb-2">
           This heatmap displays the number of recorded bribery and corruption
           incidents per country (X‑axis) across different years (Y‑axis). Darker
