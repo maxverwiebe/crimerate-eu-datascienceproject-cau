@@ -156,29 +156,29 @@ const Question6Chart1 = () => {
       <ChartHeader title="Gender distribution" />
       <ExplanationSection title="How to Read This Chart">
         <p className="mb-2">
-          This population pyramid chart visualizes the distribution of individuals involved in
-          crime cases, broken down by gender, for a selected legal status
-          (Suspected, Prosecuted, or Convicted) across different years and countries.
-          The data can be viewed either as the total number of individuals or
-          as the count per 100,000 inhabitants.
+          This population pyramid chart visualizes the distribution of
+          individuals involved in crime cases, broken down by gender, for a
+          selected legal status (Suspected, Prosecuted, or Convicted) across
+          different years and countries. The data can be viewed either as the
+          total number of individuals or as the count per 100,000 inhabitants.
         </p>
         <ul className="list-disc list-inside space-y-1 mb-2">
           <li>
-            <strong>X‑Axis (Number of Persons):</strong> Displays either the total number of individuals
-            or the count per 100,000 inhabitants, depending on the selected unit.
+            <strong>X‑Axis (Number of Persons):</strong> Displays either the
+            total number of individuals or the count per 100,000 inhabitants,
+            depending on the selected unit.
           </li>
           <li>
-            <strong>Y‑Axis (Country):</strong> Each row represents a selected country in Europe
+            <strong>Y‑Axis (Country):</strong> Each row represents a selected
+            country in Europe
           </li>
           <li>
-            <strong>Mirrored Bars:</strong> The chart is split into two sections:
-            Males on the left and Females on the right showing each gender’s
-            contribution to the total count.
+            <strong>Mirrored Bars:</strong> The chart is split into two
+            sections: Males on the left and Females on the right showing each
+            gender’s contribution to the total count.
           </li>
         </ul>
       </ExplanationSection>
-
-
 
       <InteractiveFilter
         interactiveData={interactiveData}
@@ -190,6 +190,18 @@ const Question6Chart1 = () => {
         </div>
       )}
       <ReactECharts option={option} style={{ width: "100%", height: 600 }} />
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/crim_just_sex"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_just_sex
+        </a>
+      </p>
     </div>
   );
 };

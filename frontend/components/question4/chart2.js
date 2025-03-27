@@ -18,7 +18,8 @@ const Question4Chart2 = () => {
     if (filters.geo) params.append("geo", filters.geo);
 
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_API
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_API
       }/api/question4/chart2?${params.toString()}`
     )
       .then((res) => res.json())
@@ -134,6 +135,36 @@ const Question4Chart2 = () => {
       )}
 
       <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/tps00001"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat tps00001
+        </a>
+        {", "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/tec00115"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat tec00115
+        </a>
+        {", "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/crim_off_cat"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_off_cat
+        </a>
+      </p>
     </div>
   );
 };

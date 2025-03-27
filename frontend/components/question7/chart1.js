@@ -178,6 +178,18 @@ export default function Question7Chart1Mini() {
           );
         })}
       </div>
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/hlth_dhc130"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat hlth_dhc130
+        </a>
+      </p>
     </div>
   );
 }

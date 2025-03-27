@@ -94,6 +94,18 @@ const Question3Chart4 = () => {
           />
         )}
       </div>
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/crim_just_bri"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_just_bri
+        </a>
+      </p>
     </div>
   );
 };

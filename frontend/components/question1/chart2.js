@@ -136,24 +136,36 @@ const Question1Chart2 = () => {
       <ChartHeader title="Trends in Police‑Recorded Crimes" />
       <ExplanationSection title="How to Read This Chart">
         <p className="mb-2">
-          This radar chart visualizes the distribution of different crime types across countries in Europe. Instead of showing numerical values in a table, it allows for an easy comparison of crime prevalence by category.
+          This radar chart visualizes the distribution of different crime types
+          across countries in Europe. Instead of showing numerical values in a
+          table, it allows for an easy comparison of crime prevalence by
+          category.
         </p>
         <ul className="list-disc list-inside space-y-1 mb-2">
           <li>
-            <strong>Axes (Crime Categories):</strong> Each axis represents a specific crime type.
+            <strong>Axes (Crime Categories):</strong> Each axis represents a
+            specific crime type.
           </li>
           <li>
-            <strong>Distance from Center:</strong> The further a point is from the center, the higher the number of reported crimes for that category.
+            <strong>Distance from Center:</strong> The further a point is from
+            the center, the higher the number of reported crimes for that
+            category.
           </li>
           <li>
-            <strong>Country Profiles:</strong> Each country is represented by a distinct polygon, illustrating the relative crime distribution per category.
+            <strong>Country Profiles:</strong> Each country is represented by a
+            distinct polygon, illustrating the relative crime distribution per
+            category.
           </li>
         </ul>
         <p>
-          This visualization helps identify crime trends and compare crime prevalence between different countries. For example, a country with a larger polygon suggests a higher overall crime rate, while specific spikes in certain directions indicate dominant crime categories.
+          This visualization helps identify crime trends and compare crime
+          prevalence between different countries. For example, a country with a
+          larger polygon suggests a higher overall crime rate, while specific
+          spikes in certain directions indicate dominant crime categories.
         </p>
         <p>
-          You can interact with the chart by filtering out specific crime categories using the "Hide Crime Groups" button.
+          You can interact with the chart by filtering out specific crime
+          categories using the "Hide Crime Groups" button.
         </p>
       </ExplanationSection>
 
@@ -205,6 +217,17 @@ const Question1Chart2 = () => {
       <div style={{ overflowX: "auto" }}>
         <ReactECharts option={option} style={{ width: "100%", height: 600 }} />
       </div>
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/CRIM_OFF_CAT"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_off_cat
+        </a>
+      </p>
     </div>
   );
 };

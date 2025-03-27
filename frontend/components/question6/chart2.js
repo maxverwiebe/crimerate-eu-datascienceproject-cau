@@ -68,7 +68,13 @@ const Question6Chart2 = () => {
     yAxis: { type: "value" },
     series: [
       { name: "Males", type: "bar", stack: "total", data: chartData.male },
-      { name: "Females", type: "bar", stack: "total", data: chartData.female, itemStyle: { color: "#EE6666" } },
+      {
+        name: "Females",
+        type: "bar",
+        stack: "total",
+        data: chartData.female,
+        itemStyle: { color: "#EE6666" },
+      },
     ],
   };
 
@@ -94,8 +100,8 @@ const Question6Chart2 = () => {
           </li>
           <li>
             <strong>Stacked Bars:</strong> Each bar is split into two segments:
-            Males and Females showing each gender’s
-            contribution to the total count.
+            Males and Females showing each gender’s contribution to the total
+            count.
           </li>
         </ul>
       </ExplanationSection>
@@ -112,6 +118,18 @@ const Question6Chart2 = () => {
       <div style={{ overflowX: "auto" }}>
         <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
       </div>
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/crim_just_sex"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_just_sex
+        </a>
+      </p>
     </div>
   );
 };

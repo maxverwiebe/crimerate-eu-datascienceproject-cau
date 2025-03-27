@@ -21,7 +21,8 @@ const Question2Chart2 = () => {
     if (filters.unit) params.append("unit", filters.unit);
 
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_API
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_API
       }/api/question2/chart2?${params.toString()}`
     )
       .then((res) => res.json())
@@ -116,28 +117,28 @@ const Question2Chart2 = () => {
     ],
     series: true
       ? [
-        {
-          type: "scatter",
-          symbolSize: function (data) {
-            return Math.sqrt(data[2]) * 0.1;
-          },
-          data: scatterData,
-          label: {
-            show: true,
-            formatter: (params) => {
-              return bubbleData[params.dataIndex].name;
+          {
+            type: "scatter",
+            symbolSize: function (data) {
+              return Math.sqrt(data[2]) * 0.1;
             },
-            position: "top",
-          },
-          emphasis: {
+            data: scatterData,
             label: {
               show: true,
-              fontWeight: "bold",
-              fontSize: 14,
+              formatter: (params) => {
+                return bubbleData[params.dataIndex].name;
+              },
+              position: "top",
+            },
+            emphasis: {
+              label: {
+                show: true,
+                fontWeight: "bold",
+                fontSize: 14,
+              },
             },
           },
-        },
-      ]
+        ]
       : [],
   };
 
@@ -228,6 +229,18 @@ const Question2Chart2 = () => {
         </div>
       )}
       <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/crim_gen_reg"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_gen_reg
+        </a>
+      </p>
     </div>
   );
 };

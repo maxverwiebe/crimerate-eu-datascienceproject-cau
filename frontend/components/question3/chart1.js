@@ -21,7 +21,8 @@ const Question3Chart1 = () => {
     if (filters.unit) params.append("unit", filters.unit);
 
     fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_API
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_API
       }/api/question3/chart1?${params.toString()}`
     )
       .then((res) => res.json())
@@ -72,7 +73,8 @@ const Question3Chart1 = () => {
     tooltip: {
       position: "top",
       formatter: ({ data }) =>
-        `<strong>${countries[data[0]]}</strong><br/>Year: ${years[data[1]]
+        `<strong>${countries[data[0]]}</strong><br/>Year: ${
+          years[data[1]]
         }<br/>Value: ${data[2].toFixed(0)}`,
     },
     xAxis: {
@@ -139,6 +141,18 @@ const Question3Chart1 = () => {
         </div>
       )}
       <ReactECharts option={option} style={{ width: "100%", height: 500 }} />
+
+      <p className="text-sm text-gray-500 m-2">
+        Source:{" "}
+        <a
+          href="https://ec.europa.eu/eurostat/databrowser/product/page/crim_just_bri"
+          className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Eurostat crim_just_bri
+        </a>
+      </p>
     </div>
   );
 };
