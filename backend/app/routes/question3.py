@@ -164,11 +164,6 @@ def chart5():
             "values": dims['time']['codes'],
             "multiple": False,
             "default": None
-        },
-        "unit": {
-            "values": ["Number", "Per hundred thousand inhabitants"],
-            "multiple": False,
-            "default": "Number"
         }
     }
 
