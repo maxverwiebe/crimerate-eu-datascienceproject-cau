@@ -29,7 +29,7 @@ export default function Navbar() {
     },
     {
       label:
-        "5. What is the relationship between income levels and crime rates? (urbanisation)",
+        "5. How does an increased police presence impact crime rates across different countries in Europe?",
       href: "/question5",
     },
     {
@@ -82,9 +82,8 @@ export default function Navbar() {
       </div>
 
       <aside
-        className={`fixed top-0 left-0 h-full bg-blue-700 p-6 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
-        } w-full md:w-80 lg:w-96 z-[100] overflow-y-auto`}
+        className={`fixed top-0 left-0 h-full bg-blue-700 p-6 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
+          } w-full md:w-80 lg:w-96 z-[100] overflow-y-auto`}
       >
         <button
           onClick={() => setIsOpen(false)}
