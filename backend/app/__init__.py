@@ -1,9 +1,16 @@
 from flask import Flask
 from flask_cors import CORS
+from flask_caching import Cache
+
+cache = Cache(config={
+    "CACHE_TYPE": "SimpleCache",
+    "CACHE_DEFAULT_TIMEOUT": 300
+})
 
 def create_app():
     app = Flask(__name__)
     CORS(app)
+    cache.init_app(app)
 
     from app.routes.question5 import question5_bp
     from app.routes.question4 import question4_bp

@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from .es_dataloader import EurostatDataLoader
 import pandas as pd
+from app import cache
 
 def filter_geo_data(dims):
     """
@@ -85,6 +86,7 @@ class ChartResponse:
         })
 
 @question7_bp.route('/chart1', methods=['GET'])
+@cache.cached(timeout=1800, query_string=True)
 def chart1():
     loader = EurostatDataLoader()
     geo_params = request.args.getlist('geo')
@@ -144,6 +146,7 @@ def chart1():
 
 
 @question7_bp.route('/chart2', methods=['GET'])
+@cache.cached(timeout=1800, query_string=True)
 def chart2():
     loader = EurostatDataLoader()
     

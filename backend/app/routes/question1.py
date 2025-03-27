@@ -2,10 +2,12 @@ from flask import Blueprint, jsonify, request
 from .es_dataloader import EurostatDataLoader
 from .chart_response import ChartResponse
 import pandas as pd
+from app import cache
 
 question1_bp = Blueprint('question1', __name__)
 
 @question1_bp.route('/chart1', methods=['GET'])
+@cache.cached(timeout=1800, query_string=True)
 def chart1():
     loader = EurostatDataLoader()
     resp = ChartResponse()
@@ -57,6 +59,7 @@ def chart1():
 
 
 @question1_bp.route('/chart3', methods=['GET'])
+@cache.cached(timeout=1800, query_string=True)
 def chart3():
     loader = EurostatDataLoader()
     resp = ChartResponse()
@@ -109,6 +112,7 @@ def chart3():
 
 
 @question1_bp.route('/chart4', methods=['GET'])
+@cache.cached(timeout=1800, query_string=True)
 def chart4():
     loader = EurostatDataLoader(cache_expiry=1800)
 
