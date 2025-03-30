@@ -1,11 +1,7 @@
-import React, { useState, useEffect } from "react";
 import Question5Chart1 from "@/components/question5/chart1";
 import Question5Chart2 from "@/components/question5/chart2";
 import SectionHeader from "@/components/sectionHeader";
 import FancyDivider from "@/components/fancyDivider";
-
-
-
 
 const Question5 = () => {
     return (

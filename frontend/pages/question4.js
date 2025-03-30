@@ -1,7 +1,6 @@
 import Question4Chart1 from "@/components/question4/chart1";
 import Question4Chart2 from "@/components/question4/chart2";
 import Question4Chart3 from "@/components/question4/chart3";
-import React, { useState, useEffect } from "react";
 import FancyDivider from "@/components/fancyDivider";
 import SectionHeader from "@/components/sectionHeader";
 

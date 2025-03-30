@@ -1,14 +1,3 @@
-import React, { useState, useEffect } from "react";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from "recharts";
-
 import Question1Chart1 from "@/components/question1/chart1";
 import Question1Chart2 from "@/components/question1/chart2";
 import Question1Chart3 from "@/components/question1/chart3";
