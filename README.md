@@ -1,5 +1,8 @@
 # crimerate-eu-datascienceproject-cau
 
+![image](https://github.com/user-attachments/assets/b2a675ed-777e-4912-a682-e0b5dcf18daf)
+
+
 Attendees: Ali Ahmed, Newar Akrawi, Ahad Iqbal, Maximilian Verwiebe
 
 # Overview
