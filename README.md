@@ -285,11 +285,15 @@ GET http://127.0.0.1:5000/question1/chart1?geo=DE
 But when requesting the same route again, the delay is gone and the response is there instantly.
 This is due to serverside caching done by the backend for every single route and makes the application faster and reduces the amount of computation and network usage.
 
-## Data retrieval from data source
+## Data retrieval from Eurostat
 
 Before processing the data, the backend needs the data.
 For this another caching mechanism is implemented.
-It at first checks if the dataset with the filters (?geo=DE...) already exists in the cache of the server. If not, it sends a request to the eurostat API, dynamically loading the data with the filters.
+It at first checks if the dataset with the filters (?geo=DE...) already exists in the cache of the server. If not, it sends a request to the Eurostat HTTPS API, dynamically loading the data with the filters and caching it.
+
+Eurostat API csalls follow this scheme:
+![image](https://github.com/user-attachments/assets/113cb5e5-4c48-4f5e-abef-57ddc375bd86)
+Source: [Eurostat Docs](https://wikis.ec.europa.eu/spaces/EUROSTATHELP/pages/95552810/API+-+Getting+started+with+statistics+API)
 
 ### Data processing
 
