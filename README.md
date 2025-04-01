@@ -14,7 +14,20 @@ This project is a Data Science Project that analyzes European crime trends using
 
 ## Screenshots
 
-TODO
+<details>
+<summary>Screenshot #1: Bubble chart question5</summary>
+<img width="1470" alt="image" src="https://github.com/user-attachments/assets/5b3e6928-9537-4375-86cf-525a93b0e67a" />
+</details>
+
+<details>
+<summary>Screenshot #2: Interactive filter</summary>
+<img width="1326" alt="image" src="https://github.com/user-attachments/assets/32c566c6-ff70-4a5e-86bf-1e8afa93ba05" />
+</details>
+
+<details>
+<summary>Screenshot #3: Navbar</summary>
+<img width="1470" alt="image" src="https://github.com/user-attachments/assets/7b314114-0376-4e7a-b98b-4fc3f0b4136a" />
+</details>
 
 ## Research Questions
 
