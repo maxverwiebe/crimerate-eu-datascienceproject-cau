@@ -283,6 +283,19 @@ GET http://127.0.0.1:5000/question1/chart1?geo=DE
 ```
 
 But when requesting the same route again, the delay is gone and the response is there instantly.
-This is due to serverside caching done by the backend for every single route and make the application faster and reduces the amount of computation and network usage.
+This is due to serverside caching done by the backend for every single route and makes the application faster and reduces the amount of computation and network usage.
+
+## Data retrieval from data source
+
+Before processing the data, the backend needs the data.
+For this another caching mechanism is implemented.
+It at first checks if the dataset with the filters (?geo=DE...) already exists in the cache of the server. If not, it sends a request to the eurostat API, dynamically loading the data with the filters.
+
+### Data processing
+
+The data is being cleaned, pre-processed & processed in the file corresponding to the question.
+For example when requesting `GET http://127.0.0.1:5000/question1/chart1`
+
+`backend/routes/question1.py` gets triggered and processes the data for chart1 and sends the ChartResponse, containing the chart data, any potential error message and the interactive filter data. Example response above.
 
 ## Data Pipeline
