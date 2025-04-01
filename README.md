@@ -6,6 +6,8 @@ Kiel University Data Science Project
 
 Attendees: Ali Ahmed, Newar Akrawi, Ahad Iqbal, Maximilian Verwiebe
 
+Check the deployed web-app: [crime-europe-cau-dsproj.vercel.app](crime-europe-cau-dsproj.vercel.app)
+
 # Overview
 
 ## Summary
@@ -104,6 +106,7 @@ README.md                       // this README
 ## Frontend
 
 The frontend is a Next.JS / React website.
+
 **Dir overview**
 
 ```
@@ -141,6 +144,41 @@ For example `components/question1/chart1.js` represents the first chart _Crime c
 
 The frontend does not really do any complicated data processing. To retrieve the data for the charts it sends HTTP(S) requests to the Backend.
 
+### Deployment
+
+[crime-europe-cau-dsproj.vercel.app](crime-europe-cau-dsproj.vercel.app)
+The webseite is deployed to Vercel. Vercel waits for changes on the main branch and automatically builds the new version and updates the deployed website.
+
 ## Backend
 
-#### Data Pipeline
+The backend is a simple Python3 flask webserver.
+
+**Dir overview**
+
+```
+backend/run.py                      // Main entry point to start dev server python3 run.py
+backend/requirements.txt            // The python pip dependencies
+backend/__init__.py                 // Main flask class
+backend/routes/question[id].py      // Routes for each research question
+```
+
+### Protocol
+
+To access the API use the HTTP protocol for dev environment and HTTPS for production environment.
+
+#### Example request
+
+```
+GET http://127.0.0.1:5000/question1/chart1
+```
+
+<details>
+<summary>Response</summary>
+```
+git status
+git add
+git commit
+```
+</details>
+
+## Data Pipeline
