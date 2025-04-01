@@ -1,7 +1,8 @@
-# crimerate-eu-datascienceproject-cau
+# 📊 Crime Rate in Europe – Data Science Project @ CAU
 
-![image](https://github.com/user-attachments/assets/b2a675ed-777e-4912-a682-e0b5dcf18daf)
+<div align="center"> <img src="https://github.com/user-attachments/assets/b2a675ed-777e-4912-a682-e0b5dcf18daf" alt="Crime in Europe Dashboard" width="80%"> </div>
 
+Kiel University Data Science Project
 
 Attendees: Ali Ahmed, Newar Akrawi, Ahad Iqbal, Maximilian Verwiebe
 
@@ -10,6 +11,10 @@ Attendees: Ali Ahmed, Newar Akrawi, Ahad Iqbal, Maximilian Verwiebe
 ## Summary
 
 This project is a Data Science Project that analyzes European crime trends using Eurostat data. It aims to explore several research questions such as comparing police-recorded crime trends between EU countries, understanding the impact of legal status and gender on crime involvement and investigating correlations between population size, economic growth, and crime rates through a series of interactive charts and visualizations. The project uses a range of visualization techniques / charts including heatmaps, bubble charts, radar diagrams and more, while integrating both backend and frontend development to deliver a comprehensive analytical cool looking website.
+
+## Screenshots
+
+TODO
 
 ## Research Questions
 
