@@ -162,23 +162,127 @@ backend/__init__.py                 // Main flask class
 backend/routes/question[id].py      // Routes for each research question
 ```
 
+### Requirements
+
+1. Flask for the basic webserver
+2. flask-cors for handling CORS when running frontend & backend locally
+3. gunicorn for running the server in an production environment
+4. requests for making requests to the Eurostat API
+5. pandas for working with dataframes
+6. Flask-Caching for caching the API routes
+
 ### Protocol
 
 To access the API use the HTTP protocol for dev environment and HTTPS for production environment.
 
 #### Example request
 
+Request being sent by the frontend
+
 ```
 GET http://127.0.0.1:5000/question1/chart1
 ```
 
-<details>
-<summary>Response</summary>
+Response
+
 ```
-git status
-git add
-git commit
+{
+  "chart_data": {
+    "most_frequent_crime": "Theft",
+    "pivot_data": {
+      "Acts against computer systems": {
+        "Albania": 800.2,
+        "Austria": 76847.59,
+        "Belgium": 47883.04,
+        "Bosnia and Herzegovina": 124.0,
+        "Bulgaria": 417.88,
+        "Croatia": 11216.15,
+        "Cyprus": 727.98,
+        "Czechia": 8852.63,
+        "Denmark": 0.0,
+        "England and Wales": 0.0,
+        "Estonia": 1543.31,
+        "Finland": 10027.29,
+        "France": 88277.99,
+        "Germany": 103345.53,
+      },
+      "Attempted intentional homicide": {
+        "Albania": 2479.65,
+        "Austria": 1716.59,
+        "Belgium": 13713.92,
+        "Bosnia and Herzegovina": 824.65,
+        "Bulgaria": 747.19,
+        "Croatia": 1452.08,
+        "Cyprus": 204.49,
+        "Czechia": 1075.13,
+        "Denmark": 2532.91,
+        "England and Wales": 0.0,
+        "Estonia": 257.02,
+        "Finland": 5124.34,
+        "France": 31256.94,
+        "Germany": 25083.58,
+      },
+  },
+  "error": null,
+  "interactive_data": {
+    "geo": {
+      "default": null,
+      "labels": [
+        "Belgium",
+        "Bulgaria",
+        "Czechia",
+        "Denmark",
+        "Germany",
+      ],
+      "multiple": true,
+      "values": [
+        "BE",
+        "BG",
+        "CZ",
+        "DK",
+        "DE",
+      ]
+    },
+    "time": {
+      "default": null,
+      "multiple": true,
+      "values": [
+        "2017",
+        "2018",
+        "2019",
+        "2020",
+        "2021",
+        "2022"
+      ]
+    }
+  }
+}
 ```
-</details>
+
+The frontend then processes this request and displays the data in a chart.
+
+`interactive_data` is the data being shown when opening the filter on the website/fronend.
+Fromn there you can fine tune the query and chart.
+For example selecting Germany will trigger another request and update the chart:
+
+```
+GET http://127.0.0.1:5000/question1/chart1?geo=DE
+```
+
+The response then only contains data regarding to Germany.
+
+`error` is a potential error message returned by the backend. It will be shown on the frontend page.
+
+### Caching
+
+The backend implements simple caching in memory.
+You may notice a little delay when requesting:
+
+```
+GET http://127.0.0.1:5000/question1/chart1?geo=DE
+```
+
+But when requesting the same route again, the delay is gone and the response is there instantly.
+This is due to serverside caching done by the backend for every single route and make the application faster and reduces the amount of computation and network usage.
 
 ## Data Pipeline
