@@ -1,11 +1,16 @@
+"""
+Helper functions for preprocessing and preparing data for question 1
+(some parts are modified or generated with AI).
+"""
+
 # Prepare chart 1 data
-def process_crime_data_chart1(df):
+def process_crime_data_chart1(df): # generated with AI
     merge_categories = {"Sexual exploitation", "Sexual violence", "Sexual assault"}
     df['iccs_merged'] = df['iccs'].apply(
         lambda x: "Sexual crimes" if x in merge_categories else x)
     
-    pivot = df.groupby(['geo', 'iccs_merged'])['value'].sum().unstack(fill_value=0)
-    most_frequent_crime = df.groupby('iccs_merged')['value'].sum().idxmax()
+    pivot = df.groupby(['geo', 'iccs_merged'])['value'].sum().unstack(fill_value=0) 
+    most_frequent_crime = df.groupby('iccs_merged')['value'].sum().idxmax() 
 
     return {
         "pivot_data": pivot.to_dict(),
@@ -17,7 +22,7 @@ def process_crime_data_chart1(df):
 def process_crime_data_chart3(df):
     merge_categories = {"Sexual exploitation", "Sexual violence", "Sexual assault"}
     df['iccs_merged'] = df['iccs'].apply(
-    lambda x: "Sexual crimes" if x in merge_categories else x
+    lambda x: "Sexual crimes" if x in merge_categories else x # modified with AI
 )
     
     crime_by_category = df.groupby('iccs_merged')['value'].sum().fillna(0)
@@ -33,15 +38,15 @@ def process_crime_data_chart4(df_pop, df_crime, latest_year):
     df_pop = (
         df_pop.dropna(subset=['value'])
         .rename(columns={'time': 'year', 'value': 'population'})
-        .assign(year=lambda d: d['year'].astype(int))
-    )
+        .assign(year=lambda d: d['year'].astype(int))  
+    ) # modified with AI
 
     df_crime = (
         df_crime.dropna(subset=['value'])
         .rename(columns={'time': 'year', 'value': 'crime_count'})
         .assign(year=lambda d: d['year'].astype(int))
-        .groupby(['geo_code', 'year'], as_index=False)['crime_count'].sum()
-    )
+        .groupby(['geo_code', 'year'], as_index=False)['crime_count'].sum() 
+    ) # modified with AI
 
     df_pop = df_pop[df_pop['year'] == latest_year][['geo_code', 'population']]
     df_crime = df_crime[df_crime['year'] == latest_year][['geo_code', 'crime_count']]
@@ -56,5 +61,5 @@ def process_crime_data_chart4(df_pop, df_crime, latest_year):
         df.sort_values('crime_rate_per_100k', ascending=False)
         [['geo_code', 'crime_rate_per_100k']]
         .rename(columns={'geo_code': 'geo'})
-        .to_dict(orient='records')
-    )
+        .to_dict(orient='records') 
+    ) # modified with AI

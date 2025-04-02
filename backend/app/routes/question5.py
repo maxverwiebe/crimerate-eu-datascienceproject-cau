@@ -1,3 +1,10 @@
+"""
+question5.py
+
+This file defines the routes and API endpoints for Question 5.
+It might include generated or modified code.
+"""
+
 from flask import Blueprint, jsonify, request
 
 from .es_dataloader import EurostatDataLoader

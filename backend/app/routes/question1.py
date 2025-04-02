@@ -1,3 +1,10 @@
+"""
+question1.py
+
+This file defines the routes and API endpoints for Question 1.
+It might include generated or modified code.
+"""
+
 from flask import Blueprint, request
 
 from app import cache

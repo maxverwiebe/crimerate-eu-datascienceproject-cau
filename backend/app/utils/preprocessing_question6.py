@@ -1,3 +1,8 @@
+"""
+Helper functions for preprocessing and preparing data for question 6
+(some parts are modified or generated with AI).
+"""
+
 import pandas as pd
 
 
@@ -16,11 +21,10 @@ def aggregate_dataframe(df: pd.DataFrame) -> dict:
         geo = record["geo"]
         time = record["time"]
         sex = record["sex"]
-        leg_stat = record["leg_stat"]  # z.B. Suspected, Prosecuted, Convicted
-        unit = record["unit"]          # Number oder Per hundred thousand inhabitants
+        leg_stat = record["leg_stat"]  
+        unit = record["unit"]         
         value = record["value"]
 
-        # Struktur aufbauen
         if geo not in aggregated:
             aggregated[geo] = {}
         if time not in aggregated[geo]:
@@ -30,7 +34,7 @@ def aggregate_dataframe(df: pd.DataFrame) -> dict:
                 "Males": {"Number": 0, "Per100k": 0},
                 "Females": {"Number": 0, "Per100k": 0},
                 "Total": {"Number": 0, "Per100k": 0}
-            }
+            } # modified with AI
     
         unit_key = "Number" if unit == "Number" else "Per100k"
         aggregated[geo][time][leg_stat][sex][unit_key] += value

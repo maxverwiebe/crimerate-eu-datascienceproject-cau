@@ -1,8 +1,12 @@
-def preprocess_q7(df):   
-    """ Cleans and filters the dataset by removing 
-        missing values,selecting relevant columns,
-        and excluding specific geographical regions. """
-    
+"""
+Helper functions for preprocessing and preparing data for question 7
+(some parts are modified or generated with AI).
+"""
+
+
+# Cleans dataset, filters relevant columns, and removes unwanted geographical regions.
+def preprocess_q7(df): 
+         
     df = df.dropna()
     df = df[df['sex'] == 'Total']
     df = df[['geo', 'time', 'age', 'value']]
@@ -32,9 +36,8 @@ def preprocess_q7(df):
     return df
 
 
+# Removes unwanted regions based on predefined codes and labels
 def filter_geo_data(dims):
-    """ Filters the 'geo' dimension to remove 
-        specific geographical codes and labels. """
     
     if 'geo' not in dims:
         return [], [] 
@@ -59,19 +62,18 @@ def filter_geo_data(dims):
 
     filtered_geo = [
         (code, label) for code, label in zip(filter_geo_codes, filter_geo_labels)
-        if code not in exclude_codes and label not in exclude_labels
+        if code not in exclude_codes and label not in exclude_labels # modified with AI
     ]
 
     if filtered_geo:
-        filter_geo_codes, filter_geo_labels = zip(*filtered_geo)
+        filter_geo_codes, filter_geo_labels = zip(*filtered_geo) # modified with AI
         return list(filter_geo_codes), list(filter_geo_labels)
     else:
         return [], []  
 
 
-def structure_chart_data(df):
-    """ Structures the dataset into a nested format with a
-    ggregated values and percentage calculations. """
+#Aggregates values and calculates percentages per geo and time.
+def structure_chart_data(df): # partially generated with AI
 
     aggregated = {}
     for record in df.to_dict(orient="records"):
@@ -97,5 +99,6 @@ def structure_chart_data(df):
         total = geo_time_totals.get((geo, time), 0)
         percentage = round((value / total * 100), 2) if total > 0 else 0
         nested_data[geo][time][age] = {"value": value, "percentage": percentage}
-    
+        # modified with AI
+
     return nested_data

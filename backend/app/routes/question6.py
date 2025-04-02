@@ -1,3 +1,11 @@
+"""
+question6.py
+
+This file defines the routes and API endpoints for Question 6.
+It might include generated or modified code.
+"""
+
+
 from flask import Blueprint, request
 import pandas as pd
 
