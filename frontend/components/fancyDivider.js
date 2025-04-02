@@ -1,3 +1,8 @@
+/*
+ * fancyDivider.js
+ * This component is used to display a fancy divider with dots.
+ */
+
 export default function FancyDivider() {
   return (
     <div className="my-10 relative text-center">

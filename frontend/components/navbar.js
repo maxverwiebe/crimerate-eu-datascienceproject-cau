@@ -1,3 +1,8 @@
+/*
+ * navbar.js
+ * Shows a navigation bar with the list of research questions.
+ */
+
 import { useState } from "react";
 import { useRouter } from "next/router";
 
@@ -81,8 +86,9 @@ export default function Navbar() {
       </div>
 
       <aside
-        className={`fixed top-0 left-0 h-full bg-blue-700 p-6 transform transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "-translate-x-full"
-          } w-full md:w-80 lg:w-96 z-[100] overflow-y-auto`}
+        className={`fixed top-0 left-0 h-full bg-blue-700 p-6 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } w-full md:w-80 lg:w-96 z-[100] overflow-y-auto`}
       >
         <button
           onClick={() => setIsOpen(false)}

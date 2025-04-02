@@ -1,5 +1,25 @@
+/*
+ * interactiveFilter.js
+ * This component is used to create an interactive filter for a set of options for a chart.
+ * It allows users to select multiple options and filter the data displayed in the chart.
+ * And it includes a search functionality to filter options based on user input.
+ */
+
+// There might be some AI help in this code, but it is not clear D:
+
 import React, { useState, useEffect, useRef, useCallback } from "react";
 
+/**
+ * InteractiveFilterOption
+ * This component is used to render a single filter option with a checkbox or radio button.
+ * It is memoized to prevent unnecessary re-renders.
+ * @param {Object} props - The props for the component.
+ * @param {string} props.groupKey - The key of the group this option belongs to.
+ * @param {Object} props.option - The option object containing value and label.
+ * @param {boolean} props.multiple - Indicates if multiple selections are allowed.
+ * @param {boolean} props.isChecked - Indicates if this option is checked.
+ * @param {function} props.onChange - The function to call when the option is changed.
+ * */
 const InteractiveFilterOption = React.memo(
   ({ groupKey, option, multiple, isChecked, onChange }) => (
     <div className="mb-2">
@@ -18,6 +38,16 @@ const InteractiveFilterOption = React.memo(
   )
 );
 
+/**
+ * InteractiveFilter
+ * This component is used to create an interactive filter for a chart.
+ * It allows users to select multiple options and filter the data displayed in the chart.
+ * It includes a search functionality to filter options based on user input.
+ * @component
+ * @param {Object} props - The props for the component.
+ * @param {Object} props.interactiveData - The data for the interactive filter.
+ * @param {function} props.onFilterChange - The function to call when the filter changes.
+ * */
 const InteractiveFilter = ({ interactiveData, onFilterChange }) => {
   const [selectedOptions, setSelectedOptions] = useState({});
   const [searchTerms, setSearchTerms] = useState({});
@@ -44,6 +74,7 @@ const InteractiveFilter = ({ interactiveData, onFilterChange }) => {
     }
   }, [interactiveData]);
 
+  // handle option change
   const handleOptionChange = useCallback(
     (groupKey, optionValue) => {
       setSelectedOptions((prev) => {
@@ -64,6 +95,7 @@ const InteractiveFilter = ({ interactiveData, onFilterChange }) => {
     [interactiveData, onFilterChange]
   );
 
+  // handle search input change
   const handleSearchChange = useCallback((groupKey, value) => {
     setSearchTerms((prev) => ({ ...prev, [groupKey]: value }));
   }, []);
@@ -83,6 +115,7 @@ const InteractiveFilter = ({ interactiveData, onFilterChange }) => {
     setIsOpen((prev) => !prev);
   };
 
+  // close the popup when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
@@ -123,6 +156,7 @@ const InteractiveFilter = ({ interactiveData, onFilterChange }) => {
     return result;
   }, [interactiveData, searchTerms, getOptionsList]);
 
+  // render the summary of selected options (text next to the button)
   const renderSummary = () => {
     if (!interactiveData) return "";
     return Object.keys(interactiveData)

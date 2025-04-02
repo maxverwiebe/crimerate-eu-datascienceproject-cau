@@ -1,3 +1,9 @@
+/*
+ * explanationSection.js
+ * This component is used to display an explanation section with a toggle button for the charts.
+ * It allows users to expand or collapse the explanation section.
+ */
+
 import { useState } from "react";
 
 export default function ExplanationSection({

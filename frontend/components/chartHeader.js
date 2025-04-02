@@ -1,3 +1,8 @@
+/*
+ * chartHeader.js
+ * This component is used to display the header for a chart.
+ */
+
 export default function ChartHeader({ title }) {
   return (
     <div className="mb-6">

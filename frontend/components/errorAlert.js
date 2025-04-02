@@ -1,3 +1,8 @@
+/*
+ * errorAlert.js
+ * This component is used to display an error alert message.
+ */
+
 export default function ErrorAlert({ message, onClose }) {
   return (
     <div className="mx-auto p-4 bg-red-50 border-l-4 border-red-400 text-red-700 rounded-lg shadow-md mb-5 flex items-start justify-between">
