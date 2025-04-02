@@ -5,6 +5,11 @@ import pandas as pd
 import itertools
 from datetime import datetime
 
+"""
+!! DISCLAIMER !!
+This class has been created with the help of AI.
+"""
+
 def _make_hashable(obj):
     """Unfortunately lists are not hashable in python, so we need to convert them to tuples"""
     if isinstance(obj, list):
@@ -195,7 +200,7 @@ class EurostatDataLoader:
 if __name__ == '__main__':
     loader = EurostatDataLoader(cache_expiry=1800)
     
-    # loads a dataset with  filters for time 2019 & 2020 as a pandas df
+    # loads a dataset with  filters for time 2019 & 2020 as a df
     df = loader.load_dataset('crim_gen_reg')
     print(df.head())
     
@@ -203,5 +208,5 @@ if __name__ == '__main__':
     # useful for some the upcoming drowndown menus for our website
     # this might need an extra API call idk
     #dims = loader.get_dimensions('ilc_mddw06')
-   #print(dims.keys()) # this gets us the keys like "time", "geo" etc
+    #print(dims.keys()) # this gets us the keys like "time", "geo" etc
     #print(dims['time']) # here we are getting all availabe years for example

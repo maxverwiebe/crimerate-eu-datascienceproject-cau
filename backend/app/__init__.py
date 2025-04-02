@@ -2,9 +2,10 @@ from flask import Flask
 from flask_cors import CORS
 from flask_caching import Cache
 
+# caches the data for 1500 seconds (25 minutes)
 cache = Cache(config={
     "CACHE_TYPE": "SimpleCache",
-    "CACHE_DEFAULT_TIMEOUT": 300
+    "CACHE_DEFAULT_TIMEOUT": 1500
 })
 
 def create_app():
