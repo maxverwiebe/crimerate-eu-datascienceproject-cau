@@ -1,3 +1,8 @@
+/*
+ * question1.js
+ * This page combines all components related to Question 1.
+ */
+
 import Question1Chart1 from "@/components/question1/chart1";
 import Question1Chart2 from "@/components/question1/chart2";
 import Question1Chart3 from "@/components/question1/chart3";

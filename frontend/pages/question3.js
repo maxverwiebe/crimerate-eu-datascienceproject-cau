@@ -1,3 +1,8 @@
+/*
+ * question3.js
+ * This page combines all components related to Question 3.
+ */
+
 import Question3Chart1 from "@/components/question3/chart1";
 import Question3Chart5 from "@/components/question3/chart5";
 import SectionHeader from "@/components/sectionHeader";

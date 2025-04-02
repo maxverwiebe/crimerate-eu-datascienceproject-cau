@@ -2,6 +2,7 @@ import "../styles/globals.css";
 import Navbar from "@/components/navbar";
 import Footer from "@/components/footer";
 
+// injecting navbar and footer into the app
 function MyApp({ Component, pageProps }) {
   return (
     <>
