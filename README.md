@@ -93,6 +93,11 @@ The GitHub repository uses two branches.
 The _main_ branch is for the code running in an production evironment.
 On the other hand the _development_ branch is for development purposes and local test servers.
 
+## Flowchart
+Example for question1 chart1.
+![image](https://github.com/user-attachments/assets/aae161f7-0bb8-4fa9-b8ef-6fd5b9e1c1bb)
+
+
 **Dir overview**
 
 ```
