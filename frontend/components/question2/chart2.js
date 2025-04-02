@@ -1,3 +1,8 @@
+/*
+ * chart2.js
+ * This component is used to display the 2nd chart for question 2.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -14,6 +19,7 @@ const Question2Chart2 = () => {
   const [error, setError] = useState(null);
   const [topCount, setTopCount] = useState(10);
 
+  // fetch data from the backend API
   useEffect(() => {
     const params = new URLSearchParams();
     filters.geo?.forEach((g) => params.append("geo", g));
@@ -34,6 +40,7 @@ const Question2Chart2 = () => {
       .catch(console.error);
   }, [filters]);
 
+  // format the data for the bubble chart
   let bubbleData = chartData.series.map((s) => {
     const start = s.data[0];
     const end = s.data[s.data.length - 1];
@@ -48,9 +55,11 @@ const Question2Chart2 = () => {
     };
   });
 
+  // sort the data by total and take the top N (N = topCount changed by the combobox)
   bubbleData.sort((a, b) => b.total - a.total);
   bubbleData = bubbleData.slice(0, topCount);
 
+  // color palette lol
   const palette = [
     "#5470C6",
     "#91CC75",
@@ -115,7 +124,7 @@ const Question2Chart2 = () => {
         end: 100,
       },
     ],
-    series: true
+    series: true // TODO: Remove
       ? [
           {
             type: "scatter",

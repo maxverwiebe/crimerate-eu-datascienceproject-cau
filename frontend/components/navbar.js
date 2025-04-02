@@ -1,5 +1,9 @@
+/*
+ * navbar.js
+ * Shows a navigation bar with the list of research questions.
+ */
+
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/router";
 
 export default function Navbar() {
@@ -19,7 +23,7 @@ export default function Navbar() {
     },
     {
       label:
-        "3. How do legal status and gender influence involvement in bribery and corruption across European countries?",
+        "3. How do legal status influence involvement in bribery and corruption across European countries?",
       href: "/question3",
     },
     {

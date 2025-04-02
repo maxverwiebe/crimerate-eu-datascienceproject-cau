@@ -1,3 +1,8 @@
+/*
+ * sectionHeader.js
+ * This component is used to display the header for a section / question.
+ */
+
 export default function SectionHeader({ number, title }) {
   return (
     <div className="mb-6">

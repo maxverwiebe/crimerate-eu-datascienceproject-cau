@@ -1,3 +1,10 @@
+/*
+ * chart1.js
+ * This component is used to display the 1st chart for question 5.
+ */
+
+// !! Hence to some bugs we used AI to fix them here!
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -13,6 +20,8 @@ const Question5Chart1 = () => {
   const [filters, setFilters] = useState({});
   const [bubbleScaler, setBubbleScaler] = useState(5);
   const [error, setError] = useState(null);
+
+  // fetch data from the backend API
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.geo) {

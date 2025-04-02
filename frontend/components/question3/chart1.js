@@ -1,3 +1,8 @@
+/*
+ * chart1.js
+ * This component is used to display the first chart for question 2.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -20,6 +25,7 @@ const Question3Chart1 = () => {
     filters.legal_status?.forEach((l) => params.append("legal_status", l));
     if (filters.unit) params.append("unit", filters.unit);
 
+    // fetch data from the backend API
     fetch(
       `${
         process.env.NEXT_PUBLIC_BACKEND_API
@@ -38,6 +44,8 @@ const Question3Chart1 = () => {
     return <ChartLoading />;
   }
 
+  // format the data for the heatmap
+  // !! USED AI HERE !!
   const aggregatedData = Object.values(
     data.reduce((acc, { geo, time, value }) => {
       const key = `${geo}-${time}`;

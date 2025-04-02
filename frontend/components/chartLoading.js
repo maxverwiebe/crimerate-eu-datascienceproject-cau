@@ -1,3 +1,8 @@
+/*
+ * chartLoading.js
+ * This component is used to display a loading spinner and a message
+ */
+
 export default function ChartLoading() {
   return (
     <div className="mb-6 flex items-center">

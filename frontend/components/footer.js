@@ -1,3 +1,8 @@
+/*
+ * footer.js
+ * This component is used to display the footer of the application.
+ */
+
 export default function Footer() {
   return (
     <footer className="bg-gray-100 text-gray-600 mt-12 border-t">

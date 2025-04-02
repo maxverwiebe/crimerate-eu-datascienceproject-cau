@@ -1,3 +1,9 @@
+/*
+ * chart4.js
+ * This component is used to display the fourth chart for question 1.
+ * There might be AI generated code in this file.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -19,6 +25,7 @@ const Question1Chart4 = () => {
   const [error, setError] = useState(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
+  // fetch data from the backend API
   useEffect(() => {
     const params = new URLSearchParams();
     filters.time?.forEach((g) => params.append("time", g));
@@ -37,6 +44,7 @@ const Question1Chart4 = () => {
       .catch((err) => setError(err.message));
   }, [filters]);
 
+  // for updating the geo map dimensions and making the site responsive
   useEffect(() => {
     const updateSize = () => {
       const width = Math.min(window.innerWidth * 0.95, 1000);

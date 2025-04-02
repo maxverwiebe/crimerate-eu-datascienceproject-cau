@@ -1,4 +1,8 @@
-import React, { useState, useEffect } from "react";
+/*
+ * question6.js
+ * This page combines all components related to Question 6.
+ */
+
 import Question6Chart1 from "@/components/question6/chart1";
 import Question6Chart2 from "@/components/question6/chart2";
 import FancyDivider from "@/components/fancyDivider";

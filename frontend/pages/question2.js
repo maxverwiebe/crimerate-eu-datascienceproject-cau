@@ -1,7 +1,11 @@
+/*
+ * question2.js
+ * This page combines all components related to Question 2.
+ */
+
 import React, { useState, useEffect } from "react";
 import SectionHeader from "@/components/sectionHeader";
 import FancyDivider from "@/components/fancyDivider";
-
 import Question2Chart1 from "@/components/question2/chart1";
 import Question2Chart2 from "@/components/question2/chart2";
 

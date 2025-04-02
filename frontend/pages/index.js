@@ -1,7 +1,13 @@
+/*
+ * index.js
+ * This page component is used as the LANDING / INDEX page.
+ */
+
 import { Geist } from "next/font/google";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 
+// LANDING PAGE
 export default function Home() {
   return (
     <div

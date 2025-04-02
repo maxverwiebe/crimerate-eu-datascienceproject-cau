@@ -1,3 +1,8 @@
+/*
+ * chart1.js
+ * This component is used to display the first chart for question 4.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -18,6 +23,7 @@ const Question4Chart1 = () => {
   const [bubbleScaler, setBubbleScaler] = useState(25);
   const [error, setError] = useState(null);
 
+  // fetch data from the backend API
   useEffect(() => {
     fetch(
       `${
@@ -39,6 +45,7 @@ const Question4Chart1 = () => {
     return <ChartLoading />;
   }
 
+  // format the data for the bubble chart
   const scatterData = chartData.map((d) => ({
     name: d.geo,
     value: [d.population, d.gdp_growth, d.crime_rate_per_100k],
