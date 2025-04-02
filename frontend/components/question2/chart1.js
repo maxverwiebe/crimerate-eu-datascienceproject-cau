@@ -1,3 +1,8 @@
+/*
+ * chart1.js
+ * This component is used to display the first chart for question 2.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -15,6 +20,7 @@ const Question2Chart1 = () => {
   const [topCount, setTopCount] = useState(10);
   const [error, setError] = useState(null);
 
+  // just objectifying the data for the scatter chart
   const formatScatterData = (data) => {
     const { cities, geo_codes, values } = data;
     return cities.map((city, index) => ({
@@ -24,6 +30,7 @@ const Question2Chart1 = () => {
     }));
   };
 
+  // fetch data from the backend API
   useEffect(() => {
     let url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question2/chart1`;
     const params = new URLSearchParams();

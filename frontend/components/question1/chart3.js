@@ -1,3 +1,9 @@
+/*
+ * chart3.js
+ * This component is used to display the 3rd chart for question 1.
+ * There might be AI generated code in this file.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -7,6 +13,7 @@ import ErrorAlert from "../errorAlert";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
+// truncateLabel function to limit the length of the label for btter readability
 const truncateLabel = (value, maxLength = 20) => {
   if (value.length > maxLength) {
     return value.substring(0, maxLength) + "...";
@@ -20,6 +27,7 @@ const Question1Chart3 = () => {
   const [interactiveData, setInteractiveData] = useState(null);
   const [error, setError] = useState(null);
 
+  // function to format the data for the bar chart
   const formatBarData = (data) => {
     const { categories, values } = data;
     const result = categories.map((cat, index) => ({
@@ -29,6 +37,7 @@ const Question1Chart3 = () => {
     return result.sort((a, b) => b.value - a.value);
   };
 
+  // fetch data from the backend API
   useEffect(() => {
     let url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question1/chart3`;
     const params = new URLSearchParams();
@@ -60,7 +69,6 @@ const Question1Chart3 = () => {
   }, [filterCriteria]);
 
   const handleFilterChange = (newFilters) => {
-    console.log("Neue Filterkriterien:", newFilters);
     setFilterCriteria(newFilters);
   };
 

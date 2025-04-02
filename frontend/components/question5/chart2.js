@@ -1,13 +1,19 @@
+/*
+ * chart2.js
+ * This component is used to display the 2nd chart for question 5.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
 import ExplanationSection from "../explanationSection";
-import SectionHeader from "../sectionHeader";
 import ChartHeader from "../chartHeader";
 import ErrorAlert from "../errorAlert";
 import ChartLoading from "../chartLoading";
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
+// calculate the regression line data
+// !! AI GENERATED CODE !! tbh
 const calculateRegression = (data) => {
   if (data.length < 2) return { lineData: [], slope: 0, intercept: 0 };
   const n = data.length;
@@ -34,12 +40,13 @@ const Question5Chart2 = () => {
   const [chartData, setChartData] = useState([]);
   const [interactiveData, setInteractiveData] = useState(null);
   const [filters, setFilters] = useState({
-    time: ["2020"],
+    time: ["2020"], // some default values because of bugs
     iccs: "Intentional homicide",
     geo: [],
   });
   const [error, setError] = useState(null);
 
+  // fetch data from the backend API
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.time?.length) params.append("time", filters.time.join(","));
@@ -71,6 +78,7 @@ const Question5Chart2 = () => {
     value: [d.crime_per_100k, d.police_per_100k],
   }));
 
+  // reg line
   const { lineData, slope, intercept } = calculateRegression(scatterData);
 
   const option = {

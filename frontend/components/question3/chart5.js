@@ -1,3 +1,8 @@
+/*
+ * chart1.js
+ * This component is used to display the 2nd chart for question 2.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -54,6 +59,8 @@ const Question3Chart5 = () => {
 
   if (!data.length) return <ChartLoading />;
 
+  // Format the data for the map
+  // !! USED AI HERE !!
   const aggregated = Object.values(
     data.reduce((acc, { geo, value }) => {
       if (!acc[geo]) acc[geo] = { geo, value: 0, count: 0 };
@@ -69,9 +76,6 @@ const Question3Chart5 = () => {
     return acc;
   }, {});
 
-  const title =
-    interactiveData?.title ||
-    "Average number of people involved in bribery and corruption";
   const valueName = interactiveData?.valueName || "Value";
 
   return (

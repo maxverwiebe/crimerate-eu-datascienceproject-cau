@@ -1,3 +1,8 @@
+/*
+ * chart2.js
+ * This component is used to display the 2nd chart for question 6.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -18,6 +23,7 @@ const Question6Chart2 = () => {
   const [interactiveData, setInteractiveData] = useState(null);
   const [error, setError] = useState(null);
 
+  // fetch data from the backend API
   useEffect(() => {
     let url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question6/chart2`;
     const params = new URLSearchParams();

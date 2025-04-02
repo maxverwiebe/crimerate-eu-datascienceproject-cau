@@ -1,3 +1,8 @@
+/*
+ * chart1.js
+ * This component is used to display the 1st chart for question 7.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "@/components/interactiveFilter";
@@ -8,6 +13,7 @@ import ExplanationSection from "../explanationSection";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
+// color palette for the chart
 const COLORS = [
   "#8884d8",
   "#82ca9d",
@@ -25,6 +31,7 @@ export default function Question7Chart1Mini() {
   const [error, setError] = useState(null);
   const [yAxisMax, setYAxisMax] = useState(50);
 
+  // fetch data from the backend API
   useEffect(() => {
     async function fetchData() {
       setError(null);
@@ -51,6 +58,7 @@ export default function Question7Chart1Mini() {
 
   const handleFilterChange = setFilterCriteria;
 
+  // format the data for the mini charts for each age group
   const getMiniChartData = (data) => {
     const result = {};
     Object.entries(data).forEach(([country, times]) =>
@@ -62,6 +70,7 @@ export default function Question7Chart1Mini() {
         })
       )
     );
+    // used AI in the return statement to sort the data
     return Object.fromEntries(
       Object.entries(result).map(([age, times]) => [
         age,
@@ -74,6 +83,8 @@ export default function Question7Chart1Mini() {
 
   const miniChartData = getMiniChartData(nestedData);
   const ageGroups = Object.keys(miniChartData).sort();
+
+  // used AI here
   const countries = Array.from(
     new Set(
       ageGroups.flatMap((age) =>

@@ -1,3 +1,8 @@
+/*
+ * chart2.js
+ * This component is used to display the 2nd chart for question 4.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -13,6 +18,7 @@ const Question4Chart2 = () => {
   const [filters, setFilters] = useState({ geo: "DE" });
   const [error, setError] = useState(null);
 
+  // fetch data from the backend API
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.geo) params.append("geo", filters.geo);

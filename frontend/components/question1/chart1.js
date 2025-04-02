@@ -1,3 +1,8 @@
+/*
+ * chart1.js
+ * This component is used to display the first chart for question 1.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -15,6 +20,7 @@ const Question1Chart1 = () => {
   const [interactiveData, setInteractiveData] = useState(null);
   const [error, setError] = useState(null);
 
+  // format the data for the stacked bar chart by pivoting the data
   const formatStackedData = (pivotData) => {
     const countries = {};
     Object.entries(pivotData).forEach(([crime, countryData]) => {
@@ -28,6 +34,7 @@ const Question1Chart1 = () => {
     return Object.values(countries);
   };
 
+  // fetch data from the backend API
   useEffect(() => {
     let url = `${process.env.NEXT_PUBLIC_BACKEND_API}/api/question1/chart1`;
     const params = new URLSearchParams();
@@ -65,7 +72,6 @@ const Question1Chart1 = () => {
   }, [filterCriteria]);
 
   const handleFilterChange = (newFilters) => {
-    console.log("NEuropee Filterkriterien:", newFilters);
     setFilterCriteria(newFilters);
   };
 

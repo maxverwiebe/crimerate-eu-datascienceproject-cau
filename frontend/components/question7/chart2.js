@@ -1,3 +1,8 @@
+/*
+ * chart2.js
+ * This component is used to display the 2nd chart for question 7.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "@/components/interactiveFilter";
@@ -8,6 +13,7 @@ import ExplanationSection from "../explanationSection";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
+// color palette
 const COLORS = [
   "#8884d8",
   "#82ca9d",
@@ -24,6 +30,7 @@ export default function Question7Chart2() {
   const [filters, setFilters] = useState({});
   const [error, setError] = useState(null);
 
+  // fetch data from the backend API
   useEffect(() => {
     async function fetchData() {
       setError(null);

@@ -1,3 +1,8 @@
+/*
+ * chart3.js
+ * This component is used to display the third chart for question 4.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -17,6 +22,7 @@ const Question4Chart3 = () => {
     geo: ["DE", "FR", "IT"],
   });
 
+  // fetch data from the backend API
   useEffect(() => {
     const params = new URLSearchParams();
     if (filters.time) params.append("time", filters.time);
@@ -53,6 +59,7 @@ const Question4Chart3 = () => {
       },
     },
     parallelAxis: [
+      // axes for parallel coordinates
       { dim: 0, name: "Population", type: "value" },
       { dim: 1, name: "GDP Growth (%)", type: "value" },
       { dim: 2, name: "Crime Rate /100k", type: "value" },
@@ -60,17 +67,16 @@ const Question4Chart3 = () => {
     series: [
       {
         name: "Country Comparison",
-        type: "parallel",
+        type: "parallel", // parallel coordinates chart
         lineStyle: { width: 2 },
         data: data.map((d) => ({
           name: d.country || d.geo_code,
-          value: [d.population, d.gdp_growth, d.crime_rate_per_100k],
+          value: [d.population, d.gdp_growth, d.crime_rate_per_100k], // data for each axis
         })),
       },
     ],
   };
 
-  // ✅ Unified Filter-Handler
   const handleFilterChange = (newFilters) => {
     setFilters((prev) => ({ ...prev, ...newFilters }));
   };

@@ -1,3 +1,9 @@
+/*
+ * chart1.js
+ * This component is used to display the 2nd chart for question 1.
+ * There might be AI generated code in this file.
+ */
+
 import React, { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -7,6 +13,8 @@ import ErrorAlert from "../errorAlert";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
+// function to format the data for the radar chart / spider chart
+// this function takes the pivot data and hidden crimes and returns the indicators and series for the radar chart
 const formatEchartsRadar = (pivotData, hiddenCrimes) => {
   const crimes = Object.keys(pivotData).filter(
     (c) => !hiddenCrimes.includes(c)
@@ -30,6 +38,8 @@ const formatEchartsRadar = (pivotData, hiddenCrimes) => {
   return { indicators, series };
 };
 
+// function to format the data for the radar chart / spider chart
+// to HIDE crime offenses
 const CrimeGroupPopup = ({
   allCrimes,
   hiddenCrimes,
@@ -90,6 +100,7 @@ const Question1Chart2 = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [error, setError] = useState(null);
 
+  // fetch data from the backend API
   useEffect(() => {
     const fetchData = async () => {
       const params = new URLSearchParams();

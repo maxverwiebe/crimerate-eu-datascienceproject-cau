@@ -1,3 +1,8 @@
+/*
+ * chart1.js
+ * This component is used to display the 1st chart for question 6.
+ */
+
 import React, { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import InteractiveFilter from "../interactiveFilter";
@@ -16,6 +21,8 @@ const Question6Chart1 = () => {
   const [selectedUnit, setSelectedUnit] = useState("Number");
   const [selectedCountries, setSelectedCountries] = useState([]);
   const [error, setError] = useState(null);
+
+  // fetch data from the backend API
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_API}/api/question6/chart1`)
       .then((response) => response.json())
@@ -33,6 +40,14 @@ const Question6Chart1 = () => {
       .catch((error) => console.error("Error fetching data:", error));
   }, []);
 
+  /**
+   * Formats the data based on selected filters.
+   *
+   * returns an JS object containing 3 arrays:
+   *   - countries: Array of selected country names or all countries if none selected
+   *   - males: Array of negative male values for the selected legal statistic, year, and unit
+   *   - females: Array of female values for the selected legal statistic, year, and unit
+   */
   const formatData = () => {
     const countries =
       selectedCountries.length > 0 ? selectedCountries : Object.keys(chartData);
