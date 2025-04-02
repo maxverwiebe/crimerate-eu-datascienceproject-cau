@@ -94,9 +94,9 @@ The _main_ branch is for the code running in an production evironment.
 On the other hand the _development_ branch is for development purposes and local test servers.
 
 ## Flowchart
+
 Example for question1 chart1.
 ![image](https://github.com/user-attachments/assets/aae161f7-0bb8-4fa9-b8ef-6fd5b9e1c1bb)
-
 
 **Dir overview**
 
@@ -165,6 +165,7 @@ backend/run.py                      // Main entry point to start dev server pyth
 backend/requirements.txt            // The python pip dependencies
 backend/__init__.py                 // Main flask class
 backend/routes/question[id].py      // Routes for each research question
+backend/routes/utils/*.py           // Processing functions for each rq chart
 ```
 
 ### Requirements
