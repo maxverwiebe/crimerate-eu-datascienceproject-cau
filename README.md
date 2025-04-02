@@ -291,9 +291,11 @@ Before processing the data, the backend needs the data.
 For this another caching mechanism is implemented.
 It at first checks if the dataset with the filters (?geo=DE...) already exists in the cache of the server. If not, it sends a request to the Eurostat HTTPS API, dynamically loading the data with the filters and caching it.
 
-Eurostat API csalls follow this scheme:
+Eurostat API calls follow this scheme: (Maybe deactivate dark mode)
 ![image](https://github.com/user-attachments/assets/113cb5e5-4c48-4f5e-abef-57ddc375bd86)
 Source: [Eurostat Docs](https://wikis.ec.europa.eu/spaces/EUROSTATHELP/pages/95552810/API+-+Getting+started+with+statistics+API)
+
+So for claryfing: There exist two caching mechanisms. One for the API calls of the backend and one for Data retrieval with the Eurostat API.
 
 ### Data processing
 
@@ -301,5 +303,3 @@ The data is being cleaned, pre-processed & processed in the file corresponding t
 For example when requesting `GET http://127.0.0.1:5000/question1/chart1`
 
 `backend/routes/question1.py` gets triggered and processes the data for chart1 and sends the ChartResponse, containing the chart data, any potential error message and the interactive filter data. Example response above.
-
-## Data Pipeline
